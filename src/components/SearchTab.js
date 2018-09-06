@@ -8,7 +8,7 @@ import GlobalStyle from '../styles/GlobalStyle'
 import Format from '../functions/Format'
 import { connect } from 'react-redux';
 
-import { listStockArray } from '../redux/reducers/lots_reducer';
+import { fetchStocklist } from '../redux/stock_list/actions';
 
 class StockList extends Component {
 
@@ -28,14 +28,11 @@ class StockList extends Component {
             pageNumber: 1,
             hideSearchInput: false,
         };
-        console.log(this);
     }
 
     componentDidMount() {
         //console.log('dispatch', this.props);
-        this.props.listStockArray(this.state.searchString).then(res => {
-            console.log(this.props);
-        });
+        this.props.fetchStocklist(this.state.searchString);
     }
 
     _renderItem = ({ item }) => (
@@ -64,8 +61,8 @@ class StockList extends Component {
     );
 
     render() {
-        const { stockList, loadingStockList } = this.props;
-        if (loadingStockList) return <Text>Loading...</Text>;
+        const { list, loading } = this.props;
+        if (loading) return <Text>Loading...</Text>;
         return (
         <View style={GlobalStyle.container} keyboardShouldPersistTaps="handled">
             <View style={[GlobalStyle.headerContainer, { backgroundColor: '#e16969' }]}>
@@ -114,10 +111,9 @@ class StockList extends Component {
                     />
                 </View>
             </View>
-
             <FlatList
                 styles={styles.container}
-                data={stockList}
+                data={list}
                 renderItem={this._renderItem}
                 keyExtractor={(item, StockID) => StockID.toString()}
             />
@@ -127,6 +123,9 @@ class StockList extends Component {
         );
     }
 }
+/*
+
+ */
 
 const styles = StyleSheet.create({
     container: {
@@ -158,12 +157,14 @@ const styles = StyleSheet.create({
     },
 });
 
-const mapStateToProps = ({ stockList }) => ({
-    stockList
+const mapStateToProps = state => ({
+    list: state.stockList.list,
+    loading: state.stockList.loading,
+    error: state.stockList.error,
 });
 
 const mapDispatchToProps = {
-    listStockArray
+    fetchStocklist
 };
 
 

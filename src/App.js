@@ -11,8 +11,9 @@ import { StyleSheet, Text, View } from 'react-native';
 import { createBottomTabNavigator, createStackNavigator } from 'react-navigation';
 import { Icon } from 'react-native-elements'
 
-import reducers from './redux/reducers/lots_reducer';
+import reducers from './redux/index';
 import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
 import { Provider, connect } from 'react-redux';
 import axios from 'axios';
 import axiosMiddleware from 'redux-axios-middleware';
@@ -30,16 +31,20 @@ const client = axios.create({
 });
 
 //https://blog.bam.tech/developper-news/4-ways-to-dispatch-actions-with-redux
+const store = createStore(reducers, applyMiddleware(thunk));
+/*
 const persistedState = loadState();
 const store = createStore(
     reducers,
     persistedState,
     applyMiddleware(axiosMiddleware(client)),
 );
+console.log(persistedState);
 
 store.subscribe(() => {
     saveState(store.getState());
-});
+});*/
+
 
 const Tabs = createBottomTabNavigator(
     {

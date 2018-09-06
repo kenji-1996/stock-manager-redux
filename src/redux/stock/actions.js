@@ -1,55 +1,25 @@
 /**
  * Created by kenji on 6/9/18.
  */
+import { fetchStockItemBegin, fetchStockItemSuccess, fetchStockItemError } from './types';
 
-import { STOCK } from './actionTypes';
-
-export function listStockItem(stockID) {
-    return {
-        type: STOCK.REQUEST_BY_ID,
-        payload: {
-            request: {
-                url: `/stock/${stockID}`
-            }
-        }
+export function fetchStocklist() {
+    return dispatch => {
+        dispatch(fetchStockItemBegin());
+        return fetch("http://192.168.0.29:49691/stock/id/123")
+            .then(handleErrors)
+            .then(res => res.json())
+            .then(json => {
+                dispatch(fetchStockItemSuccess(json.data));
+                return json.products;
+            })
+            .catch(error => dispatch(fetchStockItemError(error)));
     };
 }
 
-export function updateStock(stockID, data) {
-    return {
-        type: PUT_STOCK,
-        payload: {
-            request: {
-                url: `/stock/${stockID}`,
-                method: `PUT`,
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                data: data,
-            }
-        }
-    };
-}
-
-export function listStockBarcodes(stockID) {
-    return {
-        type: GET_BARCODES,
-        payload: {
-            request: {
-                url: `/stock/${stockID}/barcodes`
-            }
-        }
-    };
-}
-
-export function listStockFromBarcode(barcode) {
-    return {
-        type: GET_STOCK_FROM_BARCODE,
-        payload: {
-            request: {
-                url: `/stock/barcode/${barcode}`
-            }
-        }
-    };
+function handleErrors(response) {
+    if (!response.ok) {
+        throw Error(response.statusText);
+    }
+    return response;
 }

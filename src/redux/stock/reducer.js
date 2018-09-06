@@ -1,26 +1,24 @@
 /**
  * Created by kenji on 6/9/18.
  */
-import { loop } from 'redux-loop';
-import { handleActions } from 'redux-actions';
-import { STOCK } from './types';
-import { stockRequest } from './cmds';
+import { combineReducers } from 'redux'
+import { FETCH_STOCKITEM_BEGIN, FETCH_STOCKITEM_SUCCESS, FETCH_STOCKITEM_FAIL} from './types'
 
 const initialState = {
-    stock: null,
-    error: null,
-    loading: false
+    stockList: [],
+    loading: false,
+    error: null
 };
 
-export default handleActions({
-    [STOCK.REQUEST]: state => loop(
-        { stock: null, loading: true, error: null },
-        stockRequest
-    ),
-    [STOCK.RESPONSE]: {
-        next: (state, {payload}) =>
-            ({loading: false, stock: payload, error: null}),
-        throw: (state, {payload}) =>
-            ({loading: false, stock: null, error: payload })
-    },
-},initialState)
+export default function stockItemReducer(state = initialState, action) {
+    switch(action.type) {
+        case FETCH_STOCKITEM_BEGIN:
+            return { ...state, loading: true, error: null };
+        case FETCH_STOCKITEM_SUCCESS:
+            return { ...state, loading: false, stockList: action.payload.data };
+        case FETCH_STOCKITEM_FAIL:
+            return { ...state, loading: false, error: action.payload.error, stockList: [] };
+        default:
+            return state;
+    }
+}
