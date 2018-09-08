@@ -19,7 +19,7 @@ export function fetchStocklist(searchParam) {
 
 function handleErrors(response) {
     if (!response.ok) {
-        throw Error(response.statusText);
+        throw Error(response);
     }
     return response;
 }

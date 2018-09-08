@@ -7,6 +7,7 @@ import { Button, Card, Text, Icon, Divider, Input, CheckBox } from 'react-native
 import GlobalStyle from '../../styles/GlobalStyle';
 import Format from "../../functions/Format";
 import StockObject from '../../objects/StockItem';
+import
 
 export default class ScanResult extends React.Component {
 
@@ -260,3 +261,16 @@ export default class ScanResult extends React.Component {
         );
     }
 }
+
+const mapStateToProps = state => ({
+    item: state.stockList.list,
+    loading: state.stockList.loading,
+    error: state.stockList.error,
+});
+
+const mapDispatchToProps = {
+    fetchStocklist
+};
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(StockList);

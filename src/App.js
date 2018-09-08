@@ -15,36 +15,15 @@ import reducers from './redux/index';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import { Provider, connect } from 'react-redux';
-import axios from 'axios';
-import axiosMiddleware from 'redux-axios-middleware';
 
 import HomeTab from './components/HomeTab';
 import SearchTab from './components/SearchTab';
 import StockDetails from './components/StockDetails';
 import ScannerTab from './components/ScannerTab';
 import StockModal from './components/modals/StockModal';
-import { loadState, saveState } from './functions/localStorage';
-
-const client = axios.create({
-    baseURL: 'http://192.168.0.29:49691',
-    responseType: 'json'
-});
 
 //https://blog.bam.tech/developper-news/4-ways-to-dispatch-actions-with-redux
 const store = createStore(reducers, applyMiddleware(thunk));
-/*
-const persistedState = loadState();
-const store = createStore(
-    reducers,
-    persistedState,
-    applyMiddleware(axiosMiddleware(client)),
-);
-console.log(persistedState);
-
-store.subscribe(() => {
-    saveState(store.getState());
-});*/
-
 
 const Tabs = createBottomTabNavigator(
     {

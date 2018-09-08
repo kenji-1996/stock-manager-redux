@@ -3,15 +3,15 @@
  */
 import { fetchStockItemBegin, fetchStockItemSuccess, fetchStockItemError } from './types';
 
-export function fetchStocklist() {
+export function fetchStocklist(id) {
     return dispatch => {
         dispatch(fetchStockItemBegin());
-        return fetch("http://192.168.0.29:49691/stock/id/123")
+        return fetch(`http://192.168.0.29:49691/stock/id/${id}`)
             .then(handleErrors)
             .then(res => res.json())
             .then(json => {
-                dispatch(fetchStockItemSuccess(json.data));
-                return json.products;
+                dispatch(fetchStockItemSuccess(json));
+                return json;
             })
             .catch(error => dispatch(fetchStockItemError(error)));
     };
@@ -19,7 +19,7 @@ export function fetchStocklist() {
 
 function handleErrors(response) {
     if (!response.ok) {
-        throw Error(response.statusText);
+        throw Error(response);
     }
     return response;
 }

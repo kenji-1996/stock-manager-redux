@@ -2,7 +2,7 @@
  * Created by kenji on 3/9/18.
  */
 import React, { Component } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Icon, Input, SearchBar, CheckBox, ListItem } from 'react-native-elements';
 import GlobalStyle from '../styles/GlobalStyle'
 import Format from '../functions/Format'
@@ -61,8 +61,7 @@ class StockList extends Component {
     );
 
     render() {
-        const { list, loading } = this.props;
-        if (loading) return <Text>Loading...</Text>;
+        const { list, loading, error } = this.props;
         return (
         <View style={GlobalStyle.container} keyboardShouldPersistTaps="handled">
             <View style={[GlobalStyle.headerContainer, { backgroundColor: '#e16969' }]}>
@@ -111,12 +110,22 @@ class StockList extends Component {
                     />
                 </View>
             </View>
-            <FlatList
-                styles={styles.container}
-                data={list}
-                renderItem={this._renderItem}
-                keyExtractor={(item, StockID) => StockID.toString()}
-            />
+            {loading?
+                <ActivityIndicator size="large" color="#e16969"/>
+                :
+                error === null?
+                    <View>
+                        <FlatList
+                            styles={styles.container}
+                            data={list}
+                            renderItem={this._renderItem}
+                            keyExtractor={(item, StockID) => StockID.toString()}
+                        />
+                        <Text></Text>
+                    </View>
+                    :
+                    <Text>Failed to load data.. {error}</Text>
+            }
         </View>
 
 

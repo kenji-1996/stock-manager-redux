@@ -9,12 +9,12 @@ export const fetchStockItemBegin = () => ({
     type: FETCH_STOCKITEM_BEGIN
 });
 
-export const fetchStockItemSuccess = products => ({
+export const fetchStockItemSuccess = item => ({
     type: FETCH_STOCKITEM_SUCCESS,
-    payload: { products }
+    payload: item
 });
 
 export const fetchStockItemError = error => ({
     type: FETCH_STOCKITEM_FAIL,
-    payload: { error }
+    payload: error
 });
