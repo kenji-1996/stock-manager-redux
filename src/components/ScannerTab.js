@@ -7,7 +7,6 @@ import { createStackNavigator, withNavigationFocus,  } from 'react-navigation';
 import { CheckBox, Button, Icon } from 'react-native-elements'
 import Camera from 'react-native-camera';
 import GlobalStyle from "../styles/GlobalStyle";
-import { listStockFromBarcode } from '../redux/reducers/lots_reducer';
 import { connect } from 'react-redux';
 
 class ScannerScreen extends React.Component {
@@ -61,57 +60,6 @@ class ScannerScreen extends React.Component {
     isFocused(isFocused, barcodeFound) {
         this.setState({isFocused: isFocused, barcodeFound: barcodeFound});
     }
-
-    _scannerSettings = () => {
-        return (
-            <View style={{...GlobalStyle.container,...GlobalStyle.flexStart}}>
-                <View elevation={5} style={{ height: "20%" ,width: '100%', backgroundColor:"#fff", alignItems: 'center',
-                    shadowColor: '#000000', shadowOffset: {width: 0, height: 3,}, shadowRadius: 5, shadowOpacity: 1.0}}>
-                    <View style={{flexDirection: 'row', justifyContent:"space-evenly"}}>
-                        <CheckBox
-                            title='SCAN TO LIST'
-                            checked={false}
-                            containerStyle={{backgroundColor: 'rgba(0,0,0,0)',borderWidth: 0}}
-                            textStyle={{fontWeight: 'normal', fontSize: 12, color: 'rgba(255, 255, 255, 1)'}}
-                            onPress={() => {
-                                alert('pressed')
-                            }}
-                        />
-                        <CheckBox
-                            title='QUICK EDIT`'
-                            checked={true}
-                            containerStyle={{backgroundColor: 'rgba(0,0,0,0)',borderWidth: 0}}
-                            textStyle={{fontWeight: 'normal', fontSize: 12, color: 'rgba(255, 255, 255, 1)'}}
-                            onPress={() => {
-                                alert('pressed')
-                            }}
-                        />
-                    </View>
-
-                    <View style={{flexDirection: 'row', justifyContent:"space-evenly"}}>
-                        <CheckBox
-                            title='QR SCANNING'
-                            checked={true}
-                            containerStyle={{backgroundColor: 'rgba(0,0,0,0)',borderWidth: 0}}
-                            textStyle={{fontWeight: 'normal', fontSize: 12, color: 'rgba(255, 255, 255, 1)'}}
-                            onPress={() => {
-                                alert('pressed')
-                            }}
-                        />
-                        <CheckBox
-                            title='NOTIFICATION'
-                            checked={true}
-                            containerStyle={{backgroundColor: 'rgba(0,0,0,0)',borderWidth: 0}}
-                            textStyle={{fontWeight: 'normal', fontSize: 12, color: 'rgba(255, 255, 255, 1)'}}
-                            onPress={() => {
-                                alert('pressed')
-                            }}
-                        />
-                    </View>
-                </View>
-            </View>
-        );
-    };
 
     render() {
         return (
@@ -197,17 +145,20 @@ class ScannerScreen extends React.Component {
     }
 }
 
-const mapStateToProps = ({ loadingStockFromBarcode, stockFromBarcode }) => ({
-    loadingStockFromBarcode, stockFromBarcode
-});
-
-const mapDispatchToProps = {
-    listStockFromBarcode
-};
-
 let ScannerStack = createStackNavigator({
     Scanner: ScannerScreen,
 });
+
+const mapStateToProps = state => ({
+    item: state.stockItem.list,
+    loading: state.stockItem.loading,
+    error: state.stockItem.error,
+});
+
+const mapDispatchToProps = {
+
+};
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(ScannerScreen);
 

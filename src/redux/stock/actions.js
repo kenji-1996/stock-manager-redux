@@ -3,7 +3,7 @@
  */
 import { fetchStockItemBegin, fetchStockItemSuccess, fetchStockItemError } from './types';
 
-export function fetchStocklist(id) {
+export function fetchStockItem(id) {
     return dispatch => {
         dispatch(fetchStockItemBegin());
         return fetch(`http://192.168.0.29:49691/stock/id/${id}`)

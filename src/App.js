@@ -18,9 +18,9 @@ import { Provider, connect } from 'react-redux';
 
 import HomeTab from './components/HomeTab';
 import SearchTab from './components/SearchTab';
-import StockDetails from './components/StockDetails';
 import ScannerTab from './components/ScannerTab';
 import StockModal from './components/modals/StockModal';
+import StockScreen from './components/StockScreen'
 
 //https://blog.bam.tech/developper-news/4-ways-to-dispatch-actions-with-redux
 const store = createStore(reducers, applyMiddleware(thunk));
@@ -75,11 +75,11 @@ const Stack = createStackNavigator(
         Home: {
             screen: Tabs
         },
-        StockDetail: {
-            screen: StockDetails
-        },
         StockModal: {
             screen: StockModal
+        },
+        StockScreen: {
+            screen: StockScreen,
         }
     },
     {

@@ -7,9 +7,9 @@ import { Button, Card, Text, Icon, Divider, Input, CheckBox } from 'react-native
 import GlobalStyle from '../../styles/GlobalStyle';
 import Format from "../../functions/Format";
 import StockObject from '../../objects/StockItem';
-import
+import { connect } from 'react-redux';
 
-export default class ScanResult extends React.Component {
+class StockModal extends React.Component {
 
     static navigationOptions = ({ navigation }) => {
         const item = navigation.getParam('item','No item found...');
@@ -31,7 +31,6 @@ export default class ScanResult extends React.Component {
 
     componentWillMount() {
         this.state.item = new StockObject(this.props.navigation.getParam('item', null));
-        this.props.navigation.state.params.isFocused(false, true);
     }
 
     _loadSettings = () => {
@@ -52,11 +51,7 @@ export default class ScanResult extends React.Component {
     };
 
     _stockByPackSize = () => {
-        if(this.state.item.PackSize > 1) {
-            return this.state.item.SOH / this.state.item.PackSize;
-        }else{
-            return this.state.item.SOH;
-        }
+        return this.state.item.SOH / this.state.item.PackSize;
     };
 
     _scrollToInput = () => {
@@ -218,6 +213,11 @@ export default class ScanResult extends React.Component {
                                             this.state.stock.SOH = (this.state.stock.SOH * this.state.item.PackSize);
                                             this.forceUpdate();
                                         }
+                                        /*
+                                         UPDATE TABLE
+                                         SET EndDate = CAST('2009-05-25' AS DATETIME)
+                                         WHERE Id = 1
+                                         */
                                         let object = {
                                             method: 'PUT',
                                             headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
@@ -248,7 +248,6 @@ export default class ScanResult extends React.Component {
                                     titleStyle={{ fontWeight: 'normal', fontSize: 12, color: 'white',padding: 10 }}
                                     buttonStyle={{backgroundColor: 'grey'}}
                                     onPress={() => {
-                                        this.props.navigation.state.params.isFocused(true, false);
                                         this.props.navigation.goBack();
                                     }}
                                     title='DISMISS'
@@ -269,8 +268,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    fetchStocklist
+
 };
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(StockList);
+export default connect(mapStateToProps, mapDispatchToProps)(StockModal);

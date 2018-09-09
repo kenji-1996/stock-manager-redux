@@ -2,13 +2,16 @@
  * Created by kenji on 3/9/18.
  */
 import React, { Component } from 'react';
+import { createStackNavigator } from 'react-navigation';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Icon, Input, SearchBar, CheckBox, ListItem } from 'react-native-elements';
 import GlobalStyle from '../styles/GlobalStyle'
 import Format from '../functions/Format'
 import { connect } from 'react-redux';
+import StockScreen from './StockScreen';
 
 import { fetchStocklist } from '../redux/stock_list/actions';
+import { fetchStockItem } from '../redux/stock/actions';
 
 class StockList extends Component {
 
@@ -44,20 +47,20 @@ class StockList extends Component {
                     <Text>Retail: {Format.formatPrice(item.Retail)}, Real: {Format.formatPrice(item.RealCost)}</Text>
                 </View>
             }
-            onPress={() => { this.props.navigation.navigate(`StockDetail`, { StockID: item.StockID }) }}
+            onPress={() => {
+                this.props.fetchStockItem(item.StockID).then(res => {
+                    console.log('result from single item', res);
+                    console.log('current props', this.props);
+                    if(!this.props.itemLoading) {
+                        if(this.props.itemError === null) {
+                            this.props.navigation.navigate(`StockScreen`, { item: this.props.item })
+                        }
+                    }
+                });
+
+            }}
             badge={{ value: (item.SOH), textStyle: {  }, containerStyle: { marginTop: -20 } }}
         />
-    );
-
-    renderItem = ({ item }) => (
-        <TouchableOpacity
-            style={styles.item}
-            onPress={() => {
-                this.props.navigation.navigate(`StockDetail`, { StockID: item.StockID })
-            }}
-        >
-            <Text>{item.TradeName}</Text>
-        </TouchableOpacity>
     );
 
     render() {
@@ -132,9 +135,6 @@ class StockList extends Component {
         );
     }
 }
-/*
-
- */
 
 const styles = StyleSheet.create({
     container: {
@@ -170,11 +170,13 @@ const mapStateToProps = state => ({
     list: state.stockList.list,
     loading: state.stockList.loading,
     error: state.stockList.error,
+    item: state.stockItem.item,
+    itemLoading: state.stockItem.loading,
+    itemError: state.stockItem.error,
 });
 
 const mapDispatchToProps = {
-    fetchStocklist
+    fetchStocklist,fetchStockItem
 };
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(StockList);
