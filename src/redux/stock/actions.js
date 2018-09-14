@@ -1,7 +1,9 @@
 /**
  * Created by kenji on 6/9/18.
  */
-import { fetchStockItemBegin, fetchStockItemSuccess, fetchStockItemError } from './types';
+import {
+    fetchStockItemBegin, fetchStockItemSuccess, fetchStockItemError,
+} from './types';
 
 export function fetchStockItem(id) {
     return dispatch => {
@@ -16,7 +18,6 @@ export function fetchStockItem(id) {
             .catch(error => dispatch(fetchStockItemError(error)));
     };
 }
-
 function handleErrors(response) {
     if (!response.ok) {
         throw Error(response);

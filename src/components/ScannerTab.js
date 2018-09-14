@@ -8,6 +8,8 @@ import { CheckBox, Button, Icon } from 'react-native-elements'
 import Camera from 'react-native-camera';
 import GlobalStyle from "../styles/GlobalStyle";
 import { connect } from 'react-redux';
+import { fetchStockItemByBarcode } from '../redux/stock_from_barcode/actions';
+import _ from 'lodash';
 
 class ScannerScreen extends React.Component {
 
@@ -42,19 +44,25 @@ class ScannerScreen extends React.Component {
         });
     };
 
-    _onBarCodeRead = (e) => {
-        if(!this.state.barcodeFound && this.state.isFocused) {
+    _actOnBarcode = (e) => {
+        if (!this.state.barcodeFound) {
             Vibration.vibrate(500);
             let barcode = parseInt(e.data);
             this.setState({barcodeFound: true, barcode: barcode});
-            this.props.listStockFromBarcode(this.state.barcode).then(() => {
-                this.state.isFocused = false;
-                this.props.navigation.navigate(`StockModal`, {
-                    item: this.props.stockFromBarcode,
-                    isFocused: this.isFocused.bind(this)
-                });
+            this.props.fetchStockItemByBarcode(this.state.barcode).then(() => {
+                if (this.props.error === null) {
+                    setTimeout( () => {
+                        this.setState({barcodeFound: false})
+                    },1000);
+                    this.props.navigation.navigate(`StockModal`, {
+                        item: this.props.item,
+                        parent: 'Scanner',
+                    });
+                }
+
             });
         }
+
     };
 
     isFocused(isFocused, barcodeFound) {
@@ -119,7 +127,7 @@ class ScannerScreen extends React.Component {
                         <View style={{height: "80%", justifyContent: 'flex-end'}}>
                             <Camera
                                 style={{...GlobalStyle.container}}
-                                onBarCodeRead={this._onBarCodeRead.bind(this)}
+                                onBarCodeRead={this._actOnBarcode.bind(this)}
                                 ref={(cam) => { this.camera = cam; }}
                                 aspect={Camera.constants.Aspect.fill}>
 
@@ -150,13 +158,13 @@ let ScannerStack = createStackNavigator({
 });
 
 const mapStateToProps = state => ({
-    item: state.stockItem.list,
-    loading: state.stockItem.loading,
-    error: state.stockItem.error,
+    item: state.stockItemFromBarcode.item,
+    loading: state.stockItemFromBarcode.loading,
+    error: state.stockItemFromBarcode.error,
 });
 
 const mapDispatchToProps = {
-
+    fetchStockItemByBarcode
 };
 
 

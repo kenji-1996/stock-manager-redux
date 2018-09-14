@@ -14,13 +14,14 @@ import { Icon } from 'react-native-elements'
 import reducers from './redux/index';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
-import { Provider, connect } from 'react-redux';
+import { Provider } from 'react-redux';
 
 import HomeTab from './components/HomeTab';
 import SearchTab from './components/SearchTab';
 import ScannerTab from './components/ScannerTab';
 import StockModal from './components/modals/StockModal';
 import StockScreen from './components/StockScreen'
+import StockItem from './components/StockItem';
 
 //https://blog.bam.tech/developper-news/4-ways-to-dispatch-actions-with-redux
 const store = createStore(reducers, applyMiddleware(thunk));
@@ -73,18 +74,36 @@ const Tabs = createBottomTabNavigator(
 const Stack = createStackNavigator(
     {
         Home: {
-            screen: Tabs
+            screen: Tabs,
+            navigationOptions: {
+                header: null,
+            },
         },
         StockModal: {
-            screen: StockModal
+            screen: StockModal,
+            navigationOptions: {
+                header: null,
+            },
         },
         StockScreen: {
             screen: StockScreen,
+        },
+        StockItem: {
+            screen: StockItem,
         }
     },
     {
-        mode: 'modal',
-        headerMode: 'none',
+        navigationOptions: {
+            headerStyle: {
+                backgroundColor: '#f4511e',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+                fontWeight: 'bold',
+            },
+        },
+        //mode: 'modal',
+        //headerMode: 'none',
     }
 );
 

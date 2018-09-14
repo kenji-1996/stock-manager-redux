@@ -179,6 +179,7 @@ class StockModal extends React.Component {
                                     titleStyle={{ fontWeight: 'normal', fontSize: 12, color: 'white',padding: 10 }}
                                     buttonStyle={{backgroundColor: '#2196F3'}}
                                     onPress={() => {
+                                        this.props.navigation.navigate('StockScreen', { item: this.state.item, parent: 'Scanner'})
                                         /*const query = Network.prepareURL({},'stock/id/' + item.StockID,this.state.server);
                                         console.log('query url',query);
                                         /Network.executeQuery(query).then(res => {

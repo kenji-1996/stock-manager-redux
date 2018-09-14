@@ -9,7 +9,18 @@ import Stock from '../objects/StockItem'
 import { Dropdown } from 'react-native-material-dropdown';
 import { Button, Card, Text, Icon, Input, Divider, CheckBox } from 'react-native-elements';
 import GlobalStyle from '../styles/GlobalStyle';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import { fetchStockItem } from '../redux/stock/actions';
+import { connect } from 'react-redux';
+
+const mapStateToProps = state => ({
+    item: state.stockItem.item,
+    itemLoading: state.stockItem.loading,
+    itemError: state.stockItem.error,
+});
+
+const mapDispatchToProps = {
+    fetchStockItem
+};
 
 class PricingTab extends React.Component {
 
@@ -32,7 +43,8 @@ class PricingTab extends React.Component {
     }
 
     componentWillMount() {
-        this.state.item = new Stock(this.props.navigation.getParam('item',null));
+        this.state.item = new Stock(this.props.item);
+        //this.state.item = new Stock(this.props.navigation.getParam('item',null));
         this.forceUpdate();
     }
 
@@ -243,6 +255,8 @@ class PricingTab extends React.Component {
     }
 }
 
+let PricingTabOutput = connect(mapStateToProps, mapDispatchToProps)(PricingTab);
+
 class OtherTab extends React.Component {
 
     static navigationOptions = ({ navigation }) => ({
@@ -262,7 +276,7 @@ class OtherTab extends React.Component {
     }
 
     componentWillMount() {
-        this.state.item = new Stock(this.props.navigation.getParam('item',null));
+        this.state.item = new Stock(this.props.item);
         this.forceUpdate();
     }
 
@@ -282,6 +296,8 @@ class OtherTab extends React.Component {
         );
     }
 }
+
+let OtherTabOutput = connect(mapStateToProps, mapDispatchToProps)(OtherTab);
 
 class StockTab extends React.Component {
 
@@ -304,7 +320,7 @@ class StockTab extends React.Component {
     }
 
     componentWillMount() {
-        this.state.item = new Stock(this.props.navigation.getParam('item',null));
+        this.state.item = new Stock(this.props.item);
         this.forceUpdate();
     }
 
@@ -536,6 +552,8 @@ class StockTab extends React.Component {
     }
 }
 
+let StockTabOutput = connect(mapStateToProps, mapDispatchToProps)(StockTab);
+
 class GeneralStockTab extends React.Component {
 
     static navigationOptions = ({ navigation }) => ({
@@ -558,8 +576,7 @@ class GeneralStockTab extends React.Component {
     }
 
     componentWillMount() {
-        console.log(this.props);
-        this.state.item = new Stock();
+        this.state.item = new Stock(this.props.item);
         //this._loadSettings();
         this.state.subDepartments.unshift({value: this.state.item.ProductGroupName || 'Product Group'});
         this.forceUpdate();
@@ -590,10 +607,6 @@ class GeneralStockTab extends React.Component {
     }
 
     render() {
-        if (!this.props.navigation.state.params) {
-            return null;
-        }
-        //Get values to render with
         let item = this.state.item;
         return (
             <ScrollView style={GlobalStyle.container} keyboardShouldPersistTaps="handled">
@@ -753,22 +766,26 @@ class GeneralStockTab extends React.Component {
     }
 }
 
+let GeneralStockTabOutput = connect(mapStateToProps, mapDispatchToProps)(GeneralStockTab);
+
+
+
 let StockTabs = createMaterialTopTabNavigator(
     {
         General: {
-            screen: props => <GeneralStockTab {...props} />,
+            screen: GeneralStockTabOutput,
             //navigationOptions:{},
         },
         Pricing:{
-            screen: props => <PricingTab {...props} />,
+            screen: PricingTabOutput,
             //navigationOptions:{},
         },
         Stock:{
-            screen: props => <StockTabs {...props} />,
+            screen: StockTabOutput
             //navigationOptions:{},
         },
         Other:{
-            screen: props => <OtherTab {...props} />,
+            screen: OtherTabOutput,
             //navigationOptions:{},
         },
     },
@@ -812,34 +829,45 @@ let StockTabs = createMaterialTopTabNavigator(
     }
 );
 
-/*StockTabs.navigationOptions = ({ navigation }) => {
-    let { routeName } = navigation.state.routes[navigation.state.index];
 
-    // You can do whatever you like here to pick the title based on the route name
-    let headerTitle = routeName;
 
-    return {
-        headerTitle,
+let StockScreenRoot = createStackNavigator(
+    {
+        Tabs: {
+            screen: StockTabs,
+            navigationOptions: ({ navigation }) => ({
+                title: `${navigation.state.routes[navigation.state.index].routeName}`,
+                headerTitle: 'xd',
+                headerStyle: {
+                    backgroundColor: '#2196f3',
+                    elevation: null
+                },
+                headerTitleStyle: {
+                    color: '#fff',
+                },
+
+                headerRight: (
+                    <Button
+                        onPress={() => alert('This is a button!')}
+                        title="Info"
+                        color="#fff"
+                    />
+                ),
+                headerLeft: (
+                    <Button
+                        onPress={() => {
+                            navigation.navigate(navigation.state.params.parent || 'Search')
+                        }}
+                        title="Info"
+                        color="#fff"
+                    />
+                ),
+            }),
+        }
+    },
+    {
         mode: 'card',
         headerMode: 'float',
-        headerRight: (
-            <Icon
-                name='heartbeat'
-                type='font-awesome'
-                color='#f50'
-                containerStyle={{margin: 8}}
-                onPress={() => console.log(navigation.state.routes[navigation.state.index])} />
-        ),
-    };
-};*/
-
-export default StockScreenRoot = createStackNavigator({
-    Tabs: {
-        screen: StockTabs,
-        navigationOptions: { title: 'Header title' }
     }
-})
-
-StockScreenRoot.navigationOptions = ({ navigation }) => {
-    console.log(navigation);
-};
+);
+export default StockScreenRoot;

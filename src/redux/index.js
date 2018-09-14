@@ -3,11 +3,13 @@
  */
 import StockListReducer from './stock_list/reducer';
 import StockItemReducer from './stock/reducer';
+import StockItemFromBarcodeReducer from './stock_from_barcode/reducer'
 import { combineReducers } from 'redux';
 
 const stockMap = combineReducers({
     stockList: StockListReducer,
-    stockItem: StockItemReducer
+    stockItem: StockItemReducer,
+    stockItemFromBarcode: StockItemFromBarcodeReducer,
 });
 
 export default stockMap;

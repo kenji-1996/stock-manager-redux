@@ -8,7 +8,7 @@ import { Icon, Input, SearchBar, CheckBox, ListItem } from 'react-native-element
 import GlobalStyle from '../styles/GlobalStyle'
 import Format from '../functions/Format'
 import { connect } from 'react-redux';
-import StockScreen from './StockScreen';
+import StockItem from './StockItem';
 
 import { fetchStocklist } from '../redux/stock_list/actions';
 import { fetchStockItem } from '../redux/stock/actions';
@@ -48,16 +48,23 @@ class StockList extends Component {
                 </View>
             }
             onPress={() => {
-                this.props.fetchStockItem(item.StockID).then(res => {
-                    console.log('result from single item', res);
-                    console.log('current props', this.props);
+                this.props.fetchStockItem(item.StockID).then(() => {
                     if(!this.props.itemLoading) {
                         if(this.props.itemError === null) {
-                            this.props.navigation.navigate(`StockScreen`, { item: this.props.item })
+                            this.props.navigation.navigate(`StockItem`, { item: this.props.item, parent: 'Search' })
                         }
                     }
                 });
 
+            }}
+            onLongPress={() => {
+                this.props.fetchStockItem(item.StockID).then(() => {
+                    if(!this.props.itemLoading) {
+                        if(this.props.itemError === null) {
+                            this.props.navigation.navigate(`StockModal`, { item: this.props.item, parent: 'Search' })
+                        }
+                    }
+                });
             }}
             badge={{ value: (item.SOH), textStyle: {  }, containerStyle: { marginTop: -20 } }}
         />
@@ -81,7 +88,7 @@ class StockList extends Component {
                             color="white"
                             name="search"
                             onPress={() => {
-                                this.props.listStockArray(this.state.searchString, this.state.pageSize, this.state.pageNumber)
+                                this.props.fetchStocklist(this.state.searchString/*, this.state.pageSize,this.state.pageNumber*/)
                             }}
                         />
                     }

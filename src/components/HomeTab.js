@@ -7,7 +7,7 @@ import { CheckBox } from 'react-native-elements';
 import {createStackNavigator,} from 'react-navigation';
 import GlobalStyle from '../styles/GlobalStyle';
 
-class HomeScreen extends React.Component {
+export default class HomeScreen extends React.Component {
     static navigationOptions = {
         title: 'Home',
     };
@@ -40,7 +40,7 @@ class HomeScreen extends React.Component {
     }
 }
 
-export default createStackNavigator({
+let z = createStackNavigator({
     Home: HomeScreen,
 });
 

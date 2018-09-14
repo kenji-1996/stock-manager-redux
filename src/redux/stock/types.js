@@ -5,16 +5,6 @@ export const FETCH_STOCKITEM_BEGIN = 'STOCKITEM/FETCH_BEGIN';
 export const FETCH_STOCKITEM_SUCCESS = 'STOCKITEM/FETCH_SUCCESS';
 export const FETCH_STOCKITEM_FAIL = 'STOCKITEM/FETCH_FAIL';
 
-export const fetchStockItemBegin = () => ({
-    type: FETCH_STOCKITEM_BEGIN
-});
-
-export const fetchStockItemSuccess = item => ({
-    type: FETCH_STOCKITEM_SUCCESS,
-    payload: item
-});
-
-export const fetchStockItemError = error => ({
-    type: FETCH_STOCKITEM_FAIL,
-    payload: error
-});
+export const fetchStockItemBegin = () => ({type: FETCH_STOCKITEM_BEGIN});
+export const fetchStockItemSuccess = item => ({type: FETCH_STOCKITEM_SUCCESS, payload: item});
+export const fetchStockItemError = error => ({type: FETCH_STOCKITEM_FAIL, payload: error});
