@@ -206,7 +206,7 @@ class StockModal extends React.Component {
                                 <Button
                                     icon={<Icon name="close" type="material-community" color='white' size={20} containerStyle={{paddingLeft: 5}}/>
                                     }
-                                    disabled={!this.state.canSave}
+                                    //disabled={!this.state.canSave}
                                     titleStyle={{ fontWeight: 'normal', fontSize: 12, color: 'white',padding: 10 }}
                                     buttonStyle={{backgroundColor: this.state.canSave? 'green' : 'red'}}
                                     onPress={() => {
@@ -224,6 +224,7 @@ class StockModal extends React.Component {
                                             headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
                                             body: JSON.stringify({'stock': this.state.stock})
                                         };
+                                        console.log(object);
                                         /*const query = Network.prepareURL({},'stock/id/' + this.state.item.StockID,this.state.server);
                                         Network.executeQuery(query, object)
                                             .then(res => {

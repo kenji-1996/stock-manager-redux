@@ -8,7 +8,6 @@ import { Icon, Input, SearchBar, CheckBox, ListItem } from 'react-native-element
 import GlobalStyle from '../styles/GlobalStyle'
 import Format from '../functions/Format'
 import { connect } from 'react-redux';
-import StockItem from './StockItem';
 
 import { fetchStocklist } from '../redux/stock_list/actions';
 import { fetchStockItem } from '../redux/stock/actions';
@@ -36,6 +35,7 @@ class StockList extends Component {
     componentDidMount() {
         //console.log('dispatch', this.props);
         this.props.fetchStocklist(this.state.searchString);
+        console.log('mounted');
     }
 
     _renderItem = ({ item }) => (
@@ -51,7 +51,7 @@ class StockList extends Component {
                 this.props.fetchStockItem(item.StockID).then(() => {
                     if(!this.props.itemLoading) {
                         if(this.props.itemError === null) {
-                            this.props.navigation.navigate(`StockItem`, { item: this.props.item, parent: 'Search' })
+                            this.props.navigation.navigate(`StockScreen`, { item: this.props.item, parent: 'Search' })
                         }
                     }
                 });

@@ -9,18 +9,9 @@ import Stock from '../objects/StockItem'
 import { Dropdown } from 'react-native-material-dropdown';
 import { Button, Card, Text, Icon, Input, Divider, CheckBox } from 'react-native-elements';
 import GlobalStyle from '../styles/GlobalStyle';
-import { fetchStockItem } from '../redux/stock/actions';
+import { fetchStockItem, toggleSave, newUpdateData } from '../redux/stock/actions';
 import { connect } from 'react-redux';
-
-const mapStateToProps = state => ({
-    item: state.stockItem.item,
-    itemLoading: state.stockItem.loading,
-    itemError: state.stockItem.error,
-});
-
-const mapDispatchToProps = {
-    fetchStockItem
-};
+import { bindActionCreators } from 'redux'
 
 class PricingTab extends React.Component {
 
@@ -43,8 +34,7 @@ class PricingTab extends React.Component {
     }
 
     componentWillMount() {
-        this.state.item = new Stock(this.props.item);
-        //this.state.item = new Stock(this.props.navigation.getParam('item',null));
+        this.state.item = new Stock(this.props.screenProps.item);
         this.forceUpdate();
     }
 
@@ -255,8 +245,6 @@ class PricingTab extends React.Component {
     }
 }
 
-let PricingTabOutput = connect(mapStateToProps, mapDispatchToProps)(PricingTab);
-
 class OtherTab extends React.Component {
 
     static navigationOptions = ({ navigation }) => ({
@@ -276,7 +264,7 @@ class OtherTab extends React.Component {
     }
 
     componentWillMount() {
-        this.state.item = new Stock(this.props.item);
+        this.state.item = new Stock(this.props.screenProps.item);
         this.forceUpdate();
     }
 
@@ -296,8 +284,6 @@ class OtherTab extends React.Component {
         );
     }
 }
-
-let OtherTabOutput = connect(mapStateToProps, mapDispatchToProps)(OtherTab);
 
 class StockTab extends React.Component {
 
@@ -320,7 +306,7 @@ class StockTab extends React.Component {
     }
 
     componentWillMount() {
-        this.state.item = new Stock(this.props.item);
+        this.state.item = new Stock(this.props.screenProps.item);
         this.forceUpdate();
     }
 
@@ -552,8 +538,6 @@ class StockTab extends React.Component {
     }
 }
 
-let StockTabOutput = connect(mapStateToProps, mapDispatchToProps)(StockTab);
-
 class GeneralStockTab extends React.Component {
 
     static navigationOptions = ({ navigation }) => ({
@@ -576,7 +560,8 @@ class GeneralStockTab extends React.Component {
     }
 
     componentWillMount() {
-        this.state.item = new Stock(this.props.item);
+        console.log(this.props);
+        this.state.item = new Stock(this.props.screenProps.item);
         //this._loadSettings();
         this.state.subDepartments.unshift({value: this.state.item.ProductGroupName || 'Product Group'});
         this.forceUpdate();
@@ -620,6 +605,11 @@ class GeneralStockTab extends React.Component {
                         onChange={(event) => {
                             this.state.item.TradeName = event.nativeEvent.text;
                             this.forceUpdate();
+                            this.props.screenProps.newUpdateData({
+                                ...this.props.screenProps.updateData,
+                                TradeName: this.state.item.TradeName
+                            });
+                            console.log(this.props);
                         }}
                         keyboardType="default"
                         returnKeyType="done"
@@ -647,6 +637,10 @@ class GeneralStockTab extends React.Component {
                         onChange={(event) => {
                             this.state.item.PLU = event.nativeEvent.text;
                             this.forceUpdate();
+                            this.props.screenProps.newUpdateData({
+                                ...this.props.screenProps.updateData,
+                                PLU: this.state.item.PLU
+                            });
                         }}
                         keyboardType='numeric'
                         returnKeyType="done"
@@ -690,6 +684,11 @@ class GeneralStockTab extends React.Component {
                         onChange={(event) => {
                             this.state.item.Message = event.nativeEvent.text;
                             this.forceUpdate();
+                            this.props.screenProps.newUpdateData({
+                                ...this.props.screenProps.updateData,
+                                Message: this.state.item.Message
+                            });
+                            console.log(this.props);
                         }}
                         keyboardType="default"
                         returnKeyType="done"
@@ -705,6 +704,11 @@ class GeneralStockTab extends React.Component {
                         onChange={(event) => {
                             this.state.item.comments = event.nativeEvent.text;
                             this.forceUpdate();
+                            this.props.screenProps.newUpdateData({
+                                ...this.props.screenProps.updateData,
+                                comments: this.state.item.comments
+                            });
+                            console.log(this.props);
                         }}
                         keyboardType="default"
                         returnKeyType="done"
@@ -766,26 +770,22 @@ class GeneralStockTab extends React.Component {
     }
 }
 
-let GeneralStockTabOutput = connect(mapStateToProps, mapDispatchToProps)(GeneralStockTab);
-
-
-
 let StockTabs = createMaterialTopTabNavigator(
     {
         General: {
-            screen: GeneralStockTabOutput,
+            screen: GeneralStockTab,
             //navigationOptions:{},
         },
         Pricing:{
-            screen: PricingTabOutput,
+            screen: PricingTab,
             //navigationOptions:{},
         },
         Stock:{
-            screen: StockTabOutput
+            screen: StockTab
             //navigationOptions:{},
         },
         Other:{
-            screen: OtherTabOutput,
+            screen: OtherTab,
             //navigationOptions:{},
         },
     },
@@ -827,11 +827,46 @@ let StockTabs = createMaterialTopTabNavigator(
         mode: 'card',
         headerMode: 'float',
     }
+
 );
 
 
+const mapStateToProps = state => ({
+    item: state.stockItem.item,
+    itemLoading: state.stockItem.loading,
+    itemError: state.stockItem.error,
+    canSave: state.stockItem.canSave,
+    updateData: state.stockItem.updateData,
+    updateResult: state.stockItem.res,
+    updating: state.stockItem.updating,
+    updatingError: state.stockItem.updatingError
+  });
+  
+const mapDispatchToProps = (dispatch) => {
+    return ({
+        fetchStockItem: bindActionCreators(fetchStockItem, dispatch),
+        toggleSave: bindActionCreators(toggleSave, dispatch),
+        newUpdateData: bindActionCreators(newUpdateData, dispatch)
+    })
+}
 
-let StockScreenRoot = createStackNavigator(
+  const mergeProps = (state, dispatch, ownProps) => {
+    return ({
+        ...ownProps,
+        screenProps: {
+          ...ownProps.screenProps,
+          ...state,
+          ...dispatch,
+        }
+    })
+  }
+  
+  export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(StockTabs);
+//export default StockScreenRoot;
+
+
+
+/*let StockScreenRoot = createStackNavigator(
     {
         Tabs: {
             screen: StockTabs,
@@ -869,5 +904,4 @@ let StockScreenRoot = createStackNavigator(
         mode: 'card',
         headerMode: 'float',
     }
-);
-export default StockScreenRoot;
+);*/

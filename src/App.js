@@ -7,7 +7,7 @@
  */
 //https://medium.com/@relferreira/react-native-redux-react-navigation-ecec4014d648
 import React, {Component} from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Button } from 'react-native';
 import { createBottomTabNavigator, createStackNavigator } from 'react-navigation';
 import { Icon } from 'react-native-elements'
 
@@ -21,7 +21,8 @@ import SearchTab from './components/SearchTab';
 import ScannerTab from './components/ScannerTab';
 import StockModal from './components/modals/StockModal';
 import StockScreen from './components/StockScreen'
-import StockItem from './components/StockItem';
+
+import SaveButton from './components/pieces/SaveButton';
 
 //https://blog.bam.tech/developper-news/4-ways-to-dispatch-actions-with-redux
 const store = createStore(reducers, applyMiddleware(thunk));
@@ -87,21 +88,12 @@ const Stack = createStackNavigator(
         },
         StockScreen: {
             screen: StockScreen,
+            navigationOptions: {
+                headerRight: (<SaveButton/>),
+            },
         },
-        StockItem: {
-            screen: StockItem,
-        }
     },
     {
-        navigationOptions: {
-            headerStyle: {
-                backgroundColor: '#f4511e',
-            },
-            headerTintColor: '#fff',
-            headerTitleStyle: {
-                fontWeight: 'bold',
-            },
-        },
         //mode: 'modal',
         //headerMode: 'none',
     }
