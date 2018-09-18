@@ -52,7 +52,7 @@ module.exports = StyleSheet.create({
     headerContainer: {
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 40,
+        padding: 0,
         backgroundColor: '#B46486'
     },
     heading: {

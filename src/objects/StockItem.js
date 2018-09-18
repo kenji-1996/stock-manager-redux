@@ -96,7 +96,10 @@ export default class StockItem {
         this.DepartmentID = this.numberFormat(stock.DepartmentID);
         this.SubDeptNumber = this.numberFormat(stock.SubDeptNumber);
         this.ProductGroupName = stock.ProductGroupName;
+    }
 
+    formattedSOH = function() {
+        return SOH / PackSize;
     }
 
     priceFormat = function(input) {

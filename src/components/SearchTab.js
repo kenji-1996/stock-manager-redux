@@ -124,7 +124,7 @@ class StockList extends Component {
                         />
                     </View>
                 </View>
-                <View style={{height: '70%'}}>
+                <View style={{}}>
                     <FlatList
                         styles={{...styles.container, marginBottom: 90}}
                         data={list}

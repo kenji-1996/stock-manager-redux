@@ -38,7 +38,7 @@ class PricingTab extends React.Component {
     componentWillMount() {
         this.state.item = new Stock(this.props.screenProps.item);
         this.forceUpdate();
-        this.props.navigation.addListener('willFocus', (route) => { Keyboard.dismiss();});
+        this.props.navigation.addListener('willFocus', (route) => { Keyboard.dismiss(); });
     }
 
     render() {
@@ -53,152 +53,46 @@ class PricingTab extends React.Component {
                             <Divider style={{ backgroundColor: 'gray', width: '100%' }} />
                         </View>
                         <View style={GlobalStyle.mainContainer}>
-                            <CustomInput
-                                value={item.RealCost}
-                                label="REAL COST (EXCL GST)"
-                                onChange={(event) => {
-                                    item.RealCost = event.nativeEvent.text;
-                                    this.forceUpdate();
+                            <CustomInput value={item.RealCost} label="REAL COST (EXCL GST)" keyboardType='numeric'
+                                onChange={(event) => { item.RealCost = event.nativeEvent.text; this.forceUpdate();
                                     this.props.screenProps.newUpdateData({
                                         ...this.props.screenProps.updateData,
                                         RealCost: item.RealCost
                                     });
                                 }}
                             />
-                            <CustomInput
-                                value={item.Retail}
-                                label="RETAIL (EXCL GST)"
-                                onChange={(event) => {
-                                    item.Retail = event.nativeEvent.text;
-                                    this.forceUpdate();
+                            <CustomInput value={item.Retail} label="RETAIL (EXCL GST)" keyboardType='numeric'
+                                onChange={(event) => { item.Retail = event.nativeEvent.text; this.forceUpdate();
                                     this.props.screenProps.newUpdateData({
                                         ...this.props.screenProps.updateData,
                                         Retail: item.Retail
                                     });
                                 }}
                             />
-                            <Input
-                                value={item.Retail.toString() || '0'}
-                                onChange={(event) => {
-                                    this.state.item.Retail = event.nativeEvent.text;
-                                    this.forceUpdate();
-                                }}
-                                keyboardType="default"
-                                returnKeyType="done"
-                                containerStyle={{ width: '90%' }}
-                                label="RETAIL (EXCL GST)"
-                                labelStyle={{ marginTop: 8, fontWeight: 'normal', fontSize: 12, color: 'rgba(0, 0, 0, .38)' }}
-                                inputContainerStyle={{ borderBottomWidth: StyleSheet.hairlineWidth }}
-                                inputStyle={{ marginLeft: 0, height: 35 }}
-                                onSubmitEditing={() => { }}
+                            <CustomInput value={item.Markup} label="MARKUP PERCENTAGE" editable={false}
                             />
-                            <Input
-                                value={item.Markup + '%' || ''}
-                                onChange={(event) => {
-                                    //this.state.item.AverageRetail = event.nativeEvent.text;
-                                    //this.forceUpdate();
-                                }}
-                                keyboardType="numeric"
-                                editable={false}
-                                returnKeyType="done"
-                                containerStyle={{ width: '90%' }}
-                                label="MARKUP PERCENTAGE"
-                                labelStyle={{ marginTop: 8, fontWeight: 'normal', fontSize: 12, color: 'rgba(0, 0, 0, .38)' }}
-                                inputContainerStyle={{ borderBottomWidth: StyleSheet.hairlineWidth }}
-                                inputStyle={{ marginLeft: 0, height: 35 }}
-                                onSubmitEditing={() => { }}
+                            <CustomInput value={Format.getGrossProfit(item.RealCost, item.Retail) + '%' || ''} 
+                                label="MARKUP PERCENTAGE" editable={false} 
                             />
-                            <Input
-                                value={Format.getGrossProfit(item.RealCost, item.Retail) + '%' || ''}
-                                onChange={(event) => {
-                                    //this.state.item.AverageRetail = event.nativeEvent.text;
-                                    //this.forceUpdate();
+                            <CustomInput value={item.AverageCost} label="AVERAGE COST (EXCL GST)" keyboardType='numeric' editable={false}
+                                onChange={(event) => { item.AverageCost = event.nativeEvent.text; this.forceUpdate();
+                                    this.props.screenProps.newUpdateData({
+                                        ...this.props.screenProps.updateData,
+                                        AverageCost: item.AverageCost
+                                    });
                                 }}
-                                keyboardType="numeric"
-                                editable={false}
-                                returnKeyType="done"
-                                containerStyle={{ width: '90%' }}
-                                label="GROSS PROFIT PERCENTAGE"
-                                labelStyle={{ marginTop: 8, fontWeight: 'normal', fontSize: 12, color: 'rgba(0, 0, 0, .38)' }}
-                                inputContainerStyle={{ borderBottomWidth: StyleSheet.hairlineWidth }}
-                                inputStyle={{ marginLeft: 0, height: 35 }}
-                                onSubmitEditing={() => { }}
                             />
-                            <Input
-                                value={item.AverageCost.toString() || ''}
-                                onChange={(event) => {
-                                    this.state.item.AverageCost = event.nativeEvent.text;
-                                    this.forceUpdate();
-                                }}
-                                keyboardType="default"
-                                returnKeyType="done"
-                                editable={false}
-                                containerStyle={{ width: '90%' }}
-                                label="AVERAGE COST (EXCL GST)"
-                                labelStyle={{ marginTop: 8, fontWeight: 'normal', fontSize: 12, color: 'rgba(0, 0, 0, .38)' }}
-                                inputContainerStyle={{ borderBottomWidth: StyleSheet.hairlineWidth }}
-                                inputStyle={{ marginLeft: 0, height: 35 }}
-                                onSubmitEditing={() => { }}
+                            <CustomInput value={item.ListCost} label="LIST COST (EXCL GST)" 
+                                keyboardType='numeric' editable={false}
                             />
-                            <Input
-                                value={item.ListCost.toString() || ''}
-                                onChange={(event) => {
-                                    this.state.item.ListCost = event.nativeEvent.text;
-                                    this.forceUpdate();
-                                }}
-                                keyboardType="default"
-                                returnKeyType="done"
-                                containerStyle={{ width: '90%' }}
-                                label="LIST COST (EXCL GST)"
-                                labelStyle={{ marginTop: 8, fontWeight: 'normal', fontSize: 12, color: 'rgba(0, 0, 0, .38)' }}
-                                inputContainerStyle={{ borderBottomWidth: StyleSheet.hairlineWidth }}
-                                inputStyle={{ marginLeft: 0, height: 35 }}
-                                onSubmitEditing={() => { }}
+                            <CustomInput value={item.RetailAfterGST} label="RETAIL (INCL GST)" 
+                                keyboardType='numeric' editable={false}
                             />
-                            <Input
-                                value={item.RetailAfterGST.toString() || ''}
-                                onChange={(event) => {
-                                    this.state.item.RetailAfterGST = event.nativeEvent.text;
-                                    this.forceUpdate();
-                                }}
-                                keyboardType="default"
-                                returnKeyType="done"
-                                containerStyle={{ width: '90%' }}
-                                label="RETAIL (INCL GST)"
-                                labelStyle={{ marginTop: 8, fontWeight: 'normal', fontSize: 12, color: 'rgba(0, 0, 0, .38)' }}
-                                inputContainerStyle={{ borderBottomWidth: StyleSheet.hairlineWidth }}
-                                inputStyle={{ marginLeft: 0, height: 35 }}
-                                onSubmitEditing={() => { }}
+                            <CustomInput value={item.RecommendedRetail} label="RECOMMENDED RETAIL" 
+                                keyboardType='numeric' editable={false}
                             />
-                            <Input
-                                value={item.RecommendedRetail.toString() || ''}
-                                onChange={(event) => {
-                                    this.state.item.RecommendedRetail = event.nativeEvent.text;
-                                    this.forceUpdate();
-                                }}
-                                keyboardType="default"
-                                returnKeyType="done"
-                                containerStyle={{ width: '90%' }}
-                                label="RECOMMENDED RETAIL"
-                                labelStyle={{ marginTop: 8, fontWeight: 'normal', fontSize: 12, color: 'rgba(0, 0, 0, .38)' }}
-                                inputContainerStyle={{ borderBottomWidth: StyleSheet.hairlineWidth }}
-                                inputStyle={{ marginLeft: 0, height: 35 }}
-                                onSubmitEditing={() => { }}
-                            />
-                            <Input
-                                value={item.AverageRetail.toString() || ''}
-                                onChange={(event) => {
-                                    this.state.item.AverageRetail = event.nativeEvent.text;
-                                    this.forceUpdate();
-                                }}
-                                keyboardType="default"
-                                returnKeyType="done"
-                                containerStyle={{ width: '90%' }}
-                                label="RECOMMENDED RETAIL"
-                                labelStyle={{ marginTop: 8, fontWeight: 'normal', fontSize: 12, color: 'rgba(0, 0, 0, .38)' }}
-                                inputContainerStyle={{ borderBottomWidth: StyleSheet.hairlineWidth }}
-                                inputStyle={{ marginLeft: 0, height: 35 }}
-                                onSubmitEditing={() => { }}
+                            <CustomInput value={item.AverageRetail} label="AVERAGE RETAIL" 
+                                keyboardType='numeric' editable={false}
                             />
                         </View>
 
@@ -208,37 +102,11 @@ class PricingTab extends React.Component {
                             <Divider style={{ backgroundColor: 'gray', width: '100%' }} />
                         </View>
                         <View style={GlobalStyle.mainContainer}>
-                            <Input
-                                value={item.GST.toString() || ''}
-                                onChange={(event) => {
-                                    this.state.item.GST = event.nativeEvent.text;
-                                    this.forceUpdate();
-                                }}
-                                editable={false}
-                                keyboardType="default"
-                                returnKeyType="done"
-                                containerStyle={{ width: '90%' }}
-                                label="RECOMMENDED RETAIL"
-                                labelStyle={{ marginTop: 8, fontWeight: 'normal', fontSize: 12, color: 'rgba(0, 0, 0, .38)' }}
-                                inputContainerStyle={{ borderBottomWidth: StyleSheet.hairlineWidth }}
-                                inputStyle={{ marginLeft: 0, height: 35 }}
-                                onSubmitEditing={() => { }}
+                            <CustomInput value={item.GST} label="GST" 
+                                keyboardType='numeric' editable={false}
                             />
-                            <Input
-                                value={item.StockDiscount || ''}
-                                onChange={(event) => {
-                                    this.state.item.StockDiscount = event.nativeEvent.text;
-                                    this.forceUpdate();
-                                }}
-                                editable={false}
-                                keyboardType="default"
-                                returnKeyType="done"
-                                containerStyle={{ width: '90%' }}
-                                label="DISCOUNT PRICE OR PERCENTAGE"
-                                labelStyle={{ marginTop: 8, fontWeight: 'normal', fontSize: 12, color: 'rgba(0, 0, 0, .38)' }}
-                                inputContainerStyle={{ borderBottomWidth: StyleSheet.hairlineWidth }}
-                                inputStyle={{ marginLeft: 0, height: 35 }}
-                                onSubmitEditing={() => { }}
+                            <CustomInput value={item.StockDiscount} label="Stock Discount" 
+                                keyboardType='numeric' editable={false}
                             />
                             <Dropdown
                                 label='GST RATE'
