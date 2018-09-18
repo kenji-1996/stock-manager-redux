@@ -2,9 +2,8 @@
  * Created by kenji on 3/9/18.
  */
 import React, { Component } from 'react';
-import { createStackNavigator } from 'react-navigation';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { Icon, Input, SearchBar, CheckBox, ListItem } from 'react-native-elements';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, RefreshControl, } from 'react-native';
+import { Icon, Input, ListItem } from 'react-native-elements';
 import GlobalStyle from '../styles/GlobalStyle'
 import Format from '../functions/Format'
 import { connect } from 'react-redux';
@@ -29,13 +28,18 @@ class StockList extends Component {
             pageSize: 50,
             pageNumber: 1,
             hideSearchInput: false,
+            refreshing: false,
         };
     }
 
     componentDidMount() {
-        //console.log('dispatch', this.props);
+        this._onRefresh();
+        //this.props.fetchStocklist(this.state.searchString);
+    }
+
+    _onRefresh = () => {
+        //this.setState({refreshing: true});
         this.props.fetchStocklist(this.state.searchString);
-        console.log('mounted');
     }
 
     _renderItem = ({ item }) => (
@@ -49,8 +53,8 @@ class StockList extends Component {
             }
             onPress={() => {
                 this.props.fetchStockItem(item.StockID).then(() => {
-                    if(!this.props.itemLoading) {
-                        if(this.props.itemError === null) {
+                    if (!this.props.itemLoading) {
+                        if (this.props.itemError === null) {
                             this.props.navigation.navigate(`StockScreen`, { item: this.props.item, parent: 'Search' })
                         }
                     }
@@ -59,84 +63,85 @@ class StockList extends Component {
             }}
             onLongPress={() => {
                 this.props.fetchStockItem(item.StockID).then(() => {
-                    if(!this.props.itemLoading) {
-                        if(this.props.itemError === null) {
+                    if (!this.props.itemLoading) {
+                        if (this.props.itemError === null) {
                             this.props.navigation.navigate(`StockModal`, { item: this.props.item, parent: 'Search' })
                         }
                     }
                 });
             }}
-            badge={{ value: (item.SOH), textStyle: {  }, containerStyle: { marginTop: -20 } }}
+            badge={{ value: (item.SOH), textStyle: {}, containerStyle: { marginTop: -20 } }}
         />
     );
 
     render() {
         const { list, loading, error } = this.props;
         return (
-        <View style={GlobalStyle.container} keyboardShouldPersistTaps="handled">
-            <View style={[GlobalStyle.headerContainer, { backgroundColor: '#e16969' }]}>
-                <Input
-                    inputStyle={GlobalStyle.heading}
-                    placeholder='Search String'
-                    value={this.state.searchString}
-                    //onCancel={this._cancelSearch}
-                    returnKeyType="search"
-                    onSubmitEditing={(e) => {this.setState({ searchString: e.nativeEvent.text});}}
-                    onChange={((e) => this.setState({ searchString: e.nativeEvent.text}))}
-                    rightIcon={
-                        <Icon
-                            color="white"
-                            name="search"
-                            onPress={() => {
-                                this.props.fetchStocklist(this.state.searchString/*, this.state.pageSize,this.state.pageNumber*/)
-                            }}
-                        />
-                    }
-                />
-                <View style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
+            <View style={GlobalStyle.container} keyboardShouldPersistTaps="handled">
+                <View style={[GlobalStyle.headerContainer, { backgroundColor: '#e16969' }]}>
                     <Input
-                        value={this.state.pageNumber.toString()}
-                        keyboardType="numeric"
-                        returnKeyType="done"
-                        containerStyle={{ width: '40%' }}
-                        label="PAGE NUMBER"
-                        labelStyle={{ marginTop: 8, fontWeight: 'normal', fontSize: 12, color: 'rgba(255, 255, 255, .6)' }}
-                        inputContainerStyle={{borderBottomWidth: StyleSheet.hairlineWidth}}
-                        inputStyle={{marginLeft: 2, height: 25, color: 'white'}}
-                        onSubmitEditing={(event) => {this.setState({pageNumber: event.nativeEvent.text})}}
-                        onChange={((event) => this.setState({pageNumber: event.nativeEvent.text}))}
+                        inputStyle={GlobalStyle.heading}
+                        placeholder='Search String'
+                        value={this.state.searchString}
+                        //onCancel={this._cancelSearch}
+                        returnKeyType="search"
+                        onSubmitEditing={(e) => { this.setState({ searchString: e.nativeEvent.text }); }}
+                        onChange={((e) => this.setState({ searchString: e.nativeEvent.text }))}
+                        rightIcon={
+                            <Icon
+                                color="white"
+                                name="search"
+                                onPress={() => {
+                                    this.props.fetchStocklist(this.state.searchString/*, this.state.pageSize,this.state.pageNumber*/)
+                                }}
+                            />
+                        }
                     />
-                    <Input
-                        value={this.state.pageSize.toString()}
-                        keyboardType="default"
-                        returnKeyType="done"
-                        containerStyle={{ width: '40%' }}
-                        label="PAGE SIZE"
-                        labelStyle={{ marginTop: 8, fontWeight: 'normal', fontSize: 12, color: 'rgba(255, 255, 255, .6)' }}
-                        inputContainerStyle={{borderBottomWidth: StyleSheet.hairlineWidth}}
-                        inputStyle={{marginLeft: 0, height: 25, color: 'white'}}
-                        onSubmitEditing={(event) => {this.setState({pageSize: event.nativeEvent.text})}}
-                        onChange={((event) => this.setState({pageSize: event.nativeEvent.text}))}
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
+                        <Input
+                            value={this.state.pageNumber.toString()}
+                            keyboardType="numeric"
+                            returnKeyType="done"
+                            containerStyle={{ width: '40%' }}
+                            label="PAGE NUMBER"
+                            labelStyle={{ marginTop: 8, fontWeight: 'normal', fontSize: 12, color: 'rgba(255, 255, 255, .6)' }}
+                            inputContainerStyle={{ borderBottomWidth: StyleSheet.hairlineWidth }}
+                            inputStyle={{ marginLeft: 2, height: 25, color: 'white' }}
+                            onSubmitEditing={(event) => { this.setState({ pageNumber: event.nativeEvent.text }) }}
+                            onChange={((event) => this.setState({ pageNumber: event.nativeEvent.text }))}
+                        />
+                        <Input
+                            value={this.state.pageSize.toString()}
+                            keyboardType="default"
+                            returnKeyType="done"
+                            containerStyle={{ width: '40%' }}
+                            label="PAGE SIZE"
+                            labelStyle={{ marginTop: 8, fontWeight: 'normal', fontSize: 12, color: 'rgba(255, 255, 255, .6)' }}
+                            inputContainerStyle={{ borderBottomWidth: StyleSheet.hairlineWidth }}
+                            inputStyle={{ marginLeft: 0, height: 25, color: 'white' }}
+                            onSubmitEditing={(event) => { this.setState({ pageSize: event.nativeEvent.text }) }}
+                            onChange={((event) => this.setState({ pageSize: event.nativeEvent.text }))}
+                        />
+                    </View>
+                </View>
+                <View style={{height: '70%'}}>
+                    <FlatList
+                        styles={{...styles.container, marginBottom: 90}}
+                        data={list}
+                        renderItem={this._renderItem}
+                        keyExtractor={(item, StockID) => StockID.toString()}
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={this.props.loading}
+                                onRefresh={this._onRefresh}
+                                size="large"
+                                tintColor="#e16969"
+                            />
+                        }
                     />
                 </View>
+
             </View>
-            {loading?
-                <ActivityIndicator size="large" color="#e16969"/>
-                :
-                error === null?
-                    <View>
-                        <FlatList
-                            styles={styles.container}
-                            data={list}
-                            renderItem={this._renderItem}
-                            keyExtractor={(item, StockID) => StockID.toString()}
-                        />
-                        <Text></Text>
-                    </View>
-                    :
-                    <Text>Failed to load data.. {error}</Text>
-            }
-        </View>
 
 
         );
@@ -183,7 +188,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    fetchStocklist,fetchStockItem
+    fetchStocklist, fetchStockItem
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(StockList);
