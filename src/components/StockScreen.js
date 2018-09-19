@@ -212,6 +212,15 @@ class StockTab extends React.Component {
                             <Divider style={{ backgroundColor: 'gray', width: '100%' }} />
                         </View>
                         <View style={GlobalStyle.mainContainer}>
+                            <CustomInput value={item.SOH} label="STOCK ON HAND" keyboardType='numeric'
+                                onChange={(event) => { item.SOH = event.nativeEvent.text; this.forceUpdate();
+                                    //get stock on hand setter 
+                                    this.props.screenProps.newUpdateData({
+                                        ...this.props.screenProps.updateData,
+                                        RealCost: item.RealCost
+                                    });
+                                }}
+                            />
                             <Input
                                 value={item.SOH.toString() || ''}
                                 onChange={(event) => {
@@ -228,7 +237,7 @@ class StockTab extends React.Component {
                                 onSubmitEditing={() => { }}
                             />
                             <Input
-                                value={item.Expected.toString() || ''}
+                                value={item.PackSize.toString() || ''}
                                 onChange={(event) => {
                                     this.state.item.Expected = event.nativeEvent.text;
                                     this.forceUpdate();
@@ -236,7 +245,7 @@ class StockTab extends React.Component {
                                 keyboardType="default"
                                 returnKeyType="done"
                                 containerStyle={{ width: '90%' }}
-                                label="STOCK ON HAND"
+                                label="EXPECTED"
                                 labelStyle={{ marginTop: 8, fontWeight: 'normal', fontSize: 12, color: 'rgba(0, 0, 0, .38)' }}
                                 inputContainerStyle={{ borderBottomWidth: StyleSheet.hairlineWidth }}
                                 inputStyle={{ marginLeft: 0, height: 35 }}
@@ -748,46 +757,3 @@ const mergeProps = (state, dispatch, ownProps) => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(StockTabs);
-//export default StockScreenRoot;
-
-
-
-/*let StockScreenRoot = createStackNavigator(
-    {
-        Tabs: {
-            screen: StockTabs,
-            navigationOptions: ({ navigation }) => ({
-                title: `${navigation.state.routes[navigation.state.index].routeName}`,
-                headerTitle: 'xd',
-                headerStyle: {
-                    backgroundColor: '#2196f3',
-                    elevation: null
-                },
-                headerTitleStyle: {
-                    color: '#fff',
-                },
-
-                headerRight: (
-                    <Button
-                        onPress={() => alert('This is a button!')}
-                        title="Info"
-                        color="#fff"
-                    />
-                ),
-                headerLeft: (
-                    <Button
-                        onPress={() => {
-                            navigation.navigate(navigation.state.params.parent || 'Search')
-                        }}
-                        title="Info"
-                        color="#fff"
-                    />
-                ),
-            }),
-        }
-    },
-    {
-        mode: 'card',
-        headerMode: 'float',
-    }
-);*/

@@ -26,7 +26,7 @@ import ConnectedSaveButton from './components/pieces/SaveButton';
 import ConnectedTitle from './components/pieces/ItemTitle';
 
 //https://blog.bam.tech/developper-news/4-ways-to-dispatch-actions-with-redux
-const store = createStore(reducers, applyMiddleware(thunk));
+export const store = createStore(reducers, applyMiddleware(thunk));
 
 const Tabs = createBottomTabNavigator(
     {
@@ -75,10 +75,10 @@ const Tabs = createBottomTabNavigator(
 
 const Stack = createStackNavigator(
     {
-        Home: {
+        MainTabs: {
             screen: Tabs,
             navigationOptions: {
-                header: null,
+                header: null
             },
         },
         StockModal: {

@@ -1,12 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, TextInput, Picker } from 'react-native';
-import { Button, Text, Icon, Input, Divider, CheckBox } from 'react-native-elements';
-
-const styles = StyleSheet.create({
-  baseInput: {
-    paddingVertical: 6,
-  },
-});
+import { Input } from 'react-native-elements';
 
 export const CustomInput = ({ style, value, label, onChange, editable = true, keyboardType = 'default' }) => {
     if(value === null || value === undefined) {
@@ -30,19 +24,3 @@ export const CustomInput = ({ style, value, label, onChange, editable = true, ke
             />
     );
 };
-
-export const AppInput = ({ children, value, onChange, ...props }) => (
-  <BaseInput {...props}>
-    <TextInput value={value} onChangeText={onChange} />
-  </BaseInput>
-);
-
-export const AppSelect = ({ children, value, onChange, items, ...props }) => (
-  <BaseInput {...props}>
-    <Picker selectedValue={value} onValueChange={onChange}>
-      {items.map(item => (
-        <Picker.Item key={item.value} label={item.label} value={item.value} />
-      ))}
-    </Picker>
-  </BaseInput>
-);
