@@ -5,18 +5,18 @@ import React, { Component } from 'react';
 import { View, Text, FlatList, StyleSheet, RefreshControl } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import { Icon, Input, ListItem } from 'react-native-elements';
-import GlobalStyle from '../styles/GlobalStyle'
-import Format from '../functions/Format'
+import GlobalStyle from '../styles/GlobalStyle';
+import Format from '../functions/Format';
 import { connect } from 'react-redux';
 import { fetchStocklist } from '../redux/stock_list/actions';
 import { fetchStockItem } from '../redux/stock/actions';
 import ConnectedSearch from './pieces/SearchInput';
+import Stock from '../objects/StockItem';
 
 
 class SearchStock extends Component {
 
     static navigationOptions = {
-        // headerTitle instead of title
         headerTitle: <ConnectedSearch />,
       };
 
@@ -36,14 +36,45 @@ class SearchStock extends Component {
     }
 
     _onRefresh = () => {
-        console.log(this.props);
         this.props.screenProps.fetchStocklist(this.props.screenProps.searchString);
     }
 
+    renderItem = ({ item }) => {
+        item = new Stock(item);
+        return (
+            <ListItem style={styles.listItem} title={item.TradeName}
+            subtitle={
+                <View>
+                    <Text>Retail: {Format.formatPrice(item.Retail)}, Real: {Format.formatPrice(item.RealCost)}</Text>
+                    <Text>SOH: {item.SOH}</Text>
+                </View>
+            }
+            onPress={() => {
+                this.props.screenProps.fetchStockItem(item.StockID).then(() => {
+                    if (!this.props.screenProps.itemLoading) {
+                        if (this.props.screenProps.itemError === null) {
+                            this.props.navigation.navigate(`StockScreen`, { item: this.props.screenProps.item, parent: 'Search' })
+                        }
+                    }
+                });
+    
+            }}
+            onLongPress={() => {
+                this.props.screenProps.fetchStockItem(item.StockID).then(() => {
+                    if (!this.props.screenProps.itemLoading) {
+                        if (this.props.screenProps.itemError === null) {
+                            this.props.navigation.navigate(`StockModal`, { item: this.props.screenProps.item, parent: 'Search' })
+                        }
+                    }
+                });
+            }}
+            badge={{ value: (item.SOH.toString()), textStyle: {}, containerStyle: { marginTop: -20 } }}
+        />
+        );
+    };
+
     _renderItem = ({ item }) => (
-        <ListItem
-            style={styles.listItem}
-            title={item.TradeName}
+        <ListItem style={styles.listItem} title={item.TradeName}
             subtitle={
                 <View>
                     <Text>Retail: {Format.formatPrice(item.Retail)}, Real: {Format.formatPrice(item.RealCost)}</Text>
@@ -76,15 +107,15 @@ class SearchStock extends Component {
         const { list, loading, error } = this.props.screenProps;
         return (
             <View style={GlobalStyle.container} keyboardShouldPersistTaps="handled">
-                <View style={{}}>
+                <View style={{marginTop: 8}}>
                     <FlatList
                         styles={{...styles.container, marginBottom: 90}}
                         data={list}
-                        renderItem={this._renderItem}
+                        renderItem={this.renderItem}
                         keyExtractor={(item, StockID) => StockID.toString()}
                         refreshControl={
                             <RefreshControl
-                                refreshing={false}
+                                refreshing={loading}
                                 onRefresh={this._onRefresh}
                                 size="large"
                                 tintColor="#e16969"
@@ -140,8 +171,6 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
     fetchStocklist, fetchStockItem
 };
-
-
 
 const mergeProps = (state, dispatch, ownProps) => {
     return ({

@@ -217,72 +217,56 @@ class StockTab extends React.Component {
                                     //get stock on hand setter 
                                     this.props.screenProps.newUpdateData({
                                         ...this.props.screenProps.updateData,
-                                        RealCost: item.RealCost
+                                        SOH: (item.SOH * item.PackSize)
                                     });
                                 }}
                             />
-                            <Input
-                                value={item.SOH.toString() || ''}
-                                onChange={(event) => {
-                                    this.state.item.SOH = event.nativeEvent.text;
-                                    this.forceUpdate();
+                            <CustomInput value={item.PackSize} label="PACK SIZE" keyboardType='numeric'
+                                onChange={(event) => { item.PackSize = event.nativeEvent.text; this.forceUpdate();
+                                    //get stock on hand setter 
+                                    this.props.screenProps.newUpdateData({
+                                        ...this.props.screenProps.updateData,
+                                        PackSize: item.PackSize
+                                    });
                                 }}
-                                keyboardType="default"
-                                returnKeyType="done"
-                                containerStyle={{ width: '90%' }}
-                                label="STOCK ON HAND"
-                                labelStyle={{ marginTop: 8, fontWeight: 'normal', fontSize: 12, color: 'rgba(0, 0, 0, .38)' }}
-                                inputContainerStyle={{ borderBottomWidth: StyleSheet.hairlineWidth }}
-                                inputStyle={{ marginLeft: 0, height: 35 }}
-                                onSubmitEditing={() => { }}
                             />
-                            <Input
-                                value={item.PackSize.toString() || ''}
-                                onChange={(event) => {
-                                    this.state.item.Expected = event.nativeEvent.text;
-                                    this.forceUpdate();
+                            <CustomInput value={item.Expected} label="EXPECTED" keyboardType='numeric'
+                                onChange={(event) => { item.Expected = event.nativeEvent.text; this.forceUpdate();
+                                    //get stock on hand setter 
+                                    this.props.screenProps.newUpdateData({
+                                        ...this.props.screenProps.updateData,
+                                        Expected: item.Expected
+                                    });
                                 }}
-                                keyboardType="default"
-                                returnKeyType="done"
-                                containerStyle={{ width: '90%' }}
-                                label="EXPECTED"
-                                labelStyle={{ marginTop: 8, fontWeight: 'normal', fontSize: 12, color: 'rgba(0, 0, 0, .38)' }}
-                                inputContainerStyle={{ borderBottomWidth: StyleSheet.hairlineWidth }}
-                                inputStyle={{ marginLeft: 0, height: 35 }}
-                                onSubmitEditing={() => { }}
                             />
-                            <Input
-                                value={item.LastOrderDate || ''}
-                                onChange={(event) => {
-                                    this.state.item.LastOrderDate = event.nativeEvent.text;
-                                    this.forceUpdate();
+                            <CustomInput value={item.MinimumSOH} label="MIN SOH" keyboardType='numeric'
+                                onChange={(event) => { item.MinimumSOH = event.nativeEvent.text; this.forceUpdate();
+                                    //get stock on hand setter 
+                                    this.props.screenProps.newUpdateData({
+                                        ...this.props.screenProps.updateData,
+                                        MinimumSOH: item.MinimumSOH
+                                    });
                                 }}
-                                keyboardType="default"
-                                returnKeyType="done"
-                                containerStyle={{ width: '90%' }}
-                                label="LAST ORDER DATE"
-                                labelStyle={{ marginTop: 8, fontWeight: 'normal', fontSize: 12, color: 'rgba(0, 0, 0, .38)' }}
-                                inputContainerStyle={{ borderBottomWidth: StyleSheet.hairlineWidth }}
-                                inputStyle={{ marginLeft: 0, height: 35 }}
-                                onSubmitEditing={() => { }}
                             />
-                            <Input
-                                value={item.LastCountDate || ''}
-                                onChange={(event) => {
-                                    this.state.item.LastCountDate = event.nativeEvent.text;
-                                    this.forceUpdate();
+                            <CustomInput value={item.LastOrderDate} label="LAST ORDER DATE" editable={false}
+                                onChange={(event) => { item.LastOrderDate = event.nativeEvent.text; this.forceUpdate();
+                                    //get stock on hand setter 
+                                    this.props.screenProps.newUpdateData({
+                                        ...this.props.screenProps.updateData,
+                                        LastOrderDate: item.LastOrderDate
+                                    });
                                 }}
-                                keyboardType="default"
-                                returnKeyType="done"
-                                containerStyle={{ width: '90%' }}
-                                label="LAST COUNT DATE"
-                                labelStyle={{ marginTop: 8, fontWeight: 'normal', fontSize: 12, color: 'rgba(0, 0, 0, .38)' }}
-                                inputContainerStyle={{ borderBottomWidth: StyleSheet.hairlineWidth }}
-                                inputStyle={{ marginLeft: 0, height: 35 }}
-                                onSubmitEditing={() => { }}
+                            />
+                            <CustomInput value={item.LastCountDate} label="LAST COUNT DATE" editable={false}
+                                onChange={(event) => { item.LastCountDate = event.nativeEvent.text; this.forceUpdate();
+                                    //get stock on hand setter 
+                                    this.props.screenProps.newUpdateData({
+                                        ...this.props.screenProps.updateData,
+                                        LastCountDate: item.LastCountDate
+                                    });
+                                }}
                             />
                         </View>
-
                         <View style={GlobalStyle.mainContainerPullLeft}>
                             <Text style={GlobalStyle.stockHeaderFont}>Flags</Text>
                             <Divider style={{ backgroundColor: 'gray', width: '100%' }} />
@@ -495,71 +479,43 @@ class GeneralStockTab extends React.Component {
                             <Divider style={{ backgroundColor: 'gray', width: '100%' }} />
                         </View>
                         <View style={GlobalStyle.mainContainer}>
-                            <Input
-                                value={item.TradeName || ''}
-                                onChange={(event) => {
-                                    this.state.item.TradeName = event.nativeEvent.text;
-                                    this.forceUpdate();
+                            <CustomInput value={item.TradeName} label="TRADE NAME"
+                                onChange={(event) => { item.TradeName = event.nativeEvent.text; this.forceUpdate();
                                     this.props.screenProps.newUpdateData({
                                         ...this.props.screenProps.updateData,
-                                        TradeName: this.state.item.TradeName
+                                        TradeName: item.TradeName
                                     });
-                                    console.log(this.props);
                                 }}
-                                keyboardType="default"
-                                returnKeyType="done"
-                                containerStyle={{ width: '90%' }}
-                                label="PRODUCT NAME"
-                                labelStyle={{ marginTop: 8, fontWeight: 'normal', fontSize: 12, color: 'rgba(0, 0, 0, .38)' }}
-                                inputContainerStyle={{ borderBottomWidth: StyleSheet.hairlineWidth }}
-                                inputStyle={{ marginLeft: 0, height: 35 }}
                             />
-                            <Input
-                                value={item.StockID.toString() || ''}
-                                editable={false}
-                                keyboardType='numeric'
-                                returnKeyType="done"
-                                containerStyle={{ width: '90%' }}
-                                label="STOCK ID"
-                                labelStyle={{ marginTop: 8, fontWeight: 'normal', fontSize: 12, color: 'rgba(0, 0, 0, .38)' }}
-                                inputContainerStyle={{ borderBottomWidth: StyleSheet.hairlineWidth }}
-                                inputStyle={{ marginLeft: 0, height: 35, color: 'gray' }}
-                                onSubmitEditing={() => { }}
-                            />
-                            <Input
-                                value={item.PLU || ''}
-                                onChange={(event) => {
-                                    this.state.item.PLU = event.nativeEvent.text;
-                                    this.forceUpdate();
+                            <CustomInput value={item.Message} label="POS Message"
+                                onChange={(event) => { item.Message = event.nativeEvent.text; this.forceUpdate();
                                     this.props.screenProps.newUpdateData({
                                         ...this.props.screenProps.updateData,
-                                        PLU: this.state.item.PLU
+                                        Message: item.Message
                                     });
                                 }}
-                                keyboardType='numeric'
-                                returnKeyType="done"
-                                containerStyle={{ width: '90%' }}
-                                label="PLU"
-                                labelStyle={{ marginTop: 8, fontWeight: 'normal', fontSize: 12, color: 'rgba(0, 0, 0, .38)' }}
-                                inputContainerStyle={{ borderBottomWidth: StyleSheet.hairlineWidth }}
-                                inputStyle={{ marginLeft: 0, height: 35 }}
-                                onSubmitEditing={() => { }}
                             />
-                            <Input
-                                value={item.UPI.toString() || ''}
-                                onChange={(event) => {
-                                    this.state.item.UPI = event.nativeEvent.text;
-                                    this.forceUpdate();
+                            <CustomInput value={item.comments} label="COMMENTS"
+                                onChange={(event) => { item.comments = event.nativeEvent.text; this.forceUpdate();
+                                    this.props.screenProps.newUpdateData({
+                                        ...this.props.screenProps.updateData,
+                                        comments: item.comments
+                                    });
                                 }}
-                                keyboardType="default"
+                            />
+                            <CustomInput value={item.PLU} label="PLU" keyboardType="numeric"
+                                onChange={(event) => { item.PLU = event.nativeEvent.text; this.forceUpdate();
+                                    this.props.screenProps.newUpdateData({
+                                        ...this.props.screenProps.updateData,
+                                        PLU: item.PLU
+                                    });
+                                }}
+                            />
+                            <CustomInput value={item.StockID} label="STOCK ID"
                                 editable={false}
-                                returnKeyType="done"
-                                containerStyle={{ width: '90%', }}
-                                label="UPI"
-                                labelStyle={{ marginTop: 8, fontWeight: 'normal', fontSize: 12, color: 'rgba(0, 0, 0, .38)' }}
-                                inputContainerStyle={{ borderBottomWidth: StyleSheet.hairlineWidth }}
-                                inputStyle={{ marginLeft: 0, height: 35, color: 'gray' }}
-                                onSubmitEditing={() => { }}
+                            />
+                            <CustomInput value={item.UPI} label="UPI"
+                                editable={false}
                             />
                             <Dropdown
                                 label='SUB DEPARTMENT'
@@ -572,46 +528,6 @@ class GeneralStockTab extends React.Component {
                                 value={this.state.subDepartments[0].value || ''}
                                 containerStyle={{ width: '90%', height: 50, marginBottom: 12 }}
                                 data={this.state.subDepartments || []}
-                            />
-                            <Input
-                                value={item.Message || ''}
-                                onChange={(event) => {
-                                    this.state.item.Message = event.nativeEvent.text;
-                                    this.forceUpdate();
-                                    this.props.screenProps.newUpdateData({
-                                        ...this.props.screenProps.updateData,
-                                        Message: this.state.item.Message
-                                    });
-                                    console.log(this.props);
-                                }}
-                                keyboardType="default"
-                                returnKeyType="done"
-                                containerStyle={{ width: '90%' }}
-                                label="POS MESSAGE"
-                                labelStyle={{ marginTop: 8, fontWeight: 'normal', fontSize: 12, color: 'rgba(0, 0, 0, .38)' }}
-                                inputContainerStyle={{ borderBottomWidth: StyleSheet.hairlineWidth }}
-                                inputStyle={{ marginLeft: 0, height: undefined }}
-                                onSubmitEditing={() => { }}
-                            />
-                            <Input
-                                value={item.comments || ''}
-                                onChange={(event) => {
-                                    this.state.item.comments = event.nativeEvent.text;
-                                    this.forceUpdate();
-                                    this.props.screenProps.newUpdateData({
-                                        ...this.props.screenProps.updateData,
-                                        comments: this.state.item.comments
-                                    });
-                                    console.log(this.props);
-                                }}
-                                keyboardType="default"
-                                returnKeyType="done"
-                                containerStyle={{ width: '90%' }}
-                                label="COMMENTS"
-                                labelStyle={{ marginTop: 8, fontWeight: 'normal', fontSize: 12, color: 'rgba(0, 0, 0, .38)' }}
-                                inputContainerStyle={{ borderBottomWidth: StyleSheet.hairlineWidth }}
-                                inputStyle={{ marginLeft: 0, height: 35 }}
-                                onSubmitEditing={() => { }}
                             />
                         </View>
 

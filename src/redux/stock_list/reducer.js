@@ -7,6 +7,8 @@ const initialState = {
     list: [],
     loading: false,
     error: null,
+    pageSize: 50,
+    pageNumber: 1,
     searchString: 'Panadol',
 };
 

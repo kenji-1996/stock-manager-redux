@@ -15,6 +15,7 @@ export default class StockItem {
 
     //Populated variables:
     ProductGroupName: string;
+    
     constructor(stock) {
         this.StockID = this.numberFormat(stock.StockID);
         this.TradeName = stock.TradeName;
@@ -25,8 +26,8 @@ export default class StockItem {
         this.OuterSize = this.numberFormat(stock.OuterSize);
         this.OrderSize = this.numberFormat(stock.OrderSize);
         this.ExtraInfo = stock.ExtraInfo;
-        this.Expected = this.numberFormat(stock.Expected);
-        this.SOH = this.numberFormat(stock.SOH);
+        this.Expected = this.numberFormat(stock.Expected / stock.PackSize);
+        this.SOH = this.numberFormat(stock.SOH / stock.PackSize);
         this.MinimumSOH = this.numberFormat(stock.MinimumSOH);
         this.MTD = this.numberFormat(stock.MTD);
         this.SOO = this.numberFormat(stock.SOO);
@@ -98,9 +99,7 @@ export default class StockItem {
         this.ProductGroupName = stock.ProductGroupName;
     }
 
-    formattedSOH = function() {
-        return SOH / PackSize;
-    }
+
 
     priceFormat = function(input) {
         const output = (input / 100).toFixed(2);
@@ -121,6 +120,11 @@ export default class StockItem {
             }
         }
     };
+
+    stockOnHandFormat = function(soh,packsize) {
+        console.log(soh,packsize,soh / packsize);
+        return (soh / packsize);
+    }
 
     numberFormat = function(input) {
         if(input === null || input === undefined) {
