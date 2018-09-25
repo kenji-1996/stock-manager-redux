@@ -2,11 +2,12 @@
  * Created by kenji on 6/9/18.
  */
 import { fetchStocklistBegin, fetchStocklistSuccess, fetchStocklistError, setStocklistSearch } from './types';
+import { store } from '../index';
 
 export function fetchStocklist(searchParam, pageNumber = 1, pageSize = 50) {
     return dispatch => {
         dispatch(fetchStocklistBegin());
-        return fetch(`http://192.168.0.29:49691/stock?search=${searchParam}&pageNumber=${pageNumber}&pageSize=${pageSize}`)
+        return fetch(`http://${store.getState().settings.connections[store.getState().settings.selectedConnection].value}/stock?search=${searchParam}&pageNumber=${pageNumber}&pageSize=${pageSize}`)
             .then(handleErrors)
             .then(res => res.json())
             .then(json => {

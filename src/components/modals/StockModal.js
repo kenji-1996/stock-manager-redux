@@ -8,13 +8,16 @@ import GlobalStyle from '../../styles/GlobalStyle';
 import Format from "../../functions/Format";
 import StockObject from '../../objects/StockItem';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { fetchStockItem, toggleSave, newUpdateData, updateStockItem } from '../../redux/stock/actions'; 
+import { CustomInput } from '../pieces/Input';
 
 class StockModal extends React.Component {
 
     static navigationOptions = ({ navigation }) => {
         const item = navigation.getParam('item','No item found...');
         return {
-            title: item.TradeName
+            title: ''
         };
     };
 
@@ -33,29 +36,8 @@ class StockModal extends React.Component {
         this.state.item = new StockObject(this.props.navigation.getParam('item', null));
     }
 
-    _loadSettings = () => {
-        AsyncStorage.getItem('tgSettings', (err, result) => {
-            if(!err) {
-                if(result !== null) {
-                    let settings = JSON.parse(result);
-                    this.setState({server: settings.servers[settings.selectedServer].value});
-                }else{
-                    alert('Please ensure your settings are setup and correct in the settings tab')
-                }
-            }else{
-                alert('set server IP in settings');
-            }
-        }).then(() => {
-            //alert('end of promise for getting storage');
-        });
-    };
-
     _stockByPackSize = () => {
         return this.state.item.SOH / this.state.item.PackSize;
-    };
-
-    _scrollToInput = () => {
-
     };
 
     render() {
@@ -69,106 +51,75 @@ class StockModal extends React.Component {
                             <Divider style={{ backgroundColor: 'gray', width: '100%' }} />
                         </View>
                         <View style={GlobalStyle.mainContainer}>
-                            <Input
-                                value={item.TradeName}
-                                keyboardType="default"
-                                returnKeyType="done"
-                                containerStyle={{ width: '90%' }}
-                                label="PRODUCT NAME"
-                                labelStyle={{ marginTop: 8, fontWeight: 'normal', fontSize: 12, color: 'rgba(0, 0, 0, .38)' }}
-                                inputContainerStyle={{borderBottomWidth: StyleSheet.hairlineWidth}}
-                                inputStyle={{marginLeft: 0, height: 35}}
-                                onSubmitEditing={(event) => {
-                                    this.state.item.TradeName = event.nativeEvent.text;
-                                    this.forceUpdate();
+                            <CustomInput value={item.TradeName} label="TRADE NAME"
+                                onChange={(event) => { item.TradeName = event.nativeEvent.text; this.forceUpdate();
+                                    this.props.newUpdateData({
+                                        ...this.props.updateData,
+                                        TradeName: item.TradeName
+                                    });
                                 }}
-                                //onFocus={this._scrollToInput.bind(this)}
                             />
-                            <Input
-                                value={Format.formatPrice(item.Retail)}
-                                onSubmitEditing={(event) => {
-                                    this.state.item.Retail = event.nativeEvent.text;
-                                    this.forceUpdate();
+                            <CustomInput value={item.Retail} label="RETAIL COST" keyboardType='numeric'
+                                onChange={(event) => { item.Retail = event.nativeEvent.text; this.forceUpdate();
+                                    this.props.newUpdateData({
+                                        ...this.props.updateData,
+                                        Retail: item.Retail
+                                    });
                                 }}
-                                keyboardType="default"
-                                returnKeyType="done"
-                                containerStyle={{ width: '90%' }}
-                                label="RETAIL COST"
-                                labelStyle={{ marginTop: 8, fontWeight: 'normal', fontSize: 12, color: 'rgba(0, 0, 0, .38)' }}
-                                inputContainerStyle={{borderBottomWidth: StyleSheet.hairlineWidth}}
-                                inputStyle={{marginLeft: 0, height: 35}}
-                                onFocus={this._scrollToInput.bind(this)}
                             />
-                            <Input
-                                value={Format.formatPrice(item.RealCost)}
-                                onSubmitEditing={(event) => {
-                                    this.state.item.RealCost = event.nativeEvent.text;
-                                    this.forceUpdate();
+                            <CustomInput value={item.RealCost} label="REAL COST" keyboardType='numeric'
+                                onChange={(event) => { item.RealCost = event.nativeEvent.text; this.forceUpdate();
+                                    this.props.newUpdateData({
+                                        ...this.props.updateData,
+                                        RealCost: item.RealCost
+                                    });
                                 }}
-                                keyboardType="default"
-                                returnKeyType="done"
-                                containerStyle={{ width: '90%' }}
-                                label="REAL COST"
-                                labelStyle={{ marginTop: 8, fontWeight: 'normal', fontSize: 12, color: 'rgba(0, 0, 0, .38)' }}
-                                inputContainerStyle={{borderBottomWidth: StyleSheet.hairlineWidth}}
-                                inputStyle={{marginLeft: 0, height: 35}}
-                                onFocus={this._scrollToInput.bind(this)}
                             />
-                            <Input
-                                value={this._stockByPackSize().toString()}
-                                onSubmitEditing={(event) => {
-                                    this.state.canSave = true;
-                                    this.state.stock.SOH = event.nativeEvent.text;
-                                    this.forceUpdate();
-                                    console.log(this.state.stock);
+                            <CustomInput value={item.SOH} label="STOCK ON HAND" keyboardType='numeric'
+                                onChange={(event) => { item.SOH = event.nativeEvent.text; this.forceUpdate();
+                                    //get stock on hand setter 
+                                    this.props.newUpdateData({
+                                        ...this.props.updateData,
+                                        SOH: (item.SOH * item.PackSize)
+                                    });
                                 }}
-                                disabled={true}
-                                keyboardType="default"
-                                returnKeyType="done"
-                                containerStyle={{ width: '90%' }}
-                                label="SOH"
-                                labelStyle={{ marginTop: 8, fontWeight: 'normal', fontSize: 12, color: 'rgba(0, 0, 0, .38)' }}
-                                inputContainerStyle={{borderBottomWidth: StyleSheet.hairlineWidth}}
-                                inputStyle={{marginLeft: 0, height: 35}}
-                                onFocus={this._scrollToInput.bind(this)}
                             />
-                            <Input
-                                value={item.comments}
-                                onSubmitEditing={(event) => {
-                                    this.state.canSave = true;
-                                    this.state.stock.comments = event.nativeEvent.text;
-                                    this.forceUpdate();
-                                    console.log(this.state.stock);
+                            <CustomInput value={item.comments} label="COMMENTS"
+                                onChange={(event) => { item.comments = event.nativeEvent.text; this.forceUpdate();
+                                    this.props.newUpdateData({
+                                        ...this.props.updateData,
+                                        comments: item.comments
+                                    });
                                 }}
-                                keyboardType="default"
-                                returnKeyType="done"
-                                containerStyle={{ width: '90%' }}
-                                label="COMMENTS"
-                                labelStyle={{ marginTop: 8, fontWeight: 'normal', fontSize: 12, color: 'rgba(0, 0, 0, .38)' }}
-                                inputContainerStyle={{borderBottomWidth: StyleSheet.hairlineWidth}}
-                                inputStyle={{marginLeft: 0, height: 35}}
-                                onFocus={this._scrollToInput.bind(this)}
                             />
                         </View>
-                        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                        <View style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
                             <CheckBox
                                 title='RE-ORDER'
-                                checked={item.Reorder}
-                                containerStyle={{backgroundColor: 'rgba(0,0,0,0)',borderWidth: 0}}
-                                textStyle={{fontWeight: 'normal', fontSize: 12, color: 'rgba(0, 0, 0, .38)'}}
+                                checked={item.Reorder || false}
+                                containerStyle={{ backgroundColor: 'rgba(0,0,0,0)', borderWidth: 0 }}
+                                textStyle={{ fontWeight: 'normal', fontSize: 12, color: 'rgba(0, 0, 0, .38)' }}
                                 onPress={() => {
                                     this.state.item.Reorder = !this.state.item.Reorder;
                                     this.forceUpdate();
+                                    this.props.newUpdateData({
+                                        ...this.props.updateData,
+                                        Reorder: item.Reorder? 0 : -1,
+                                    });
                                 }}
                             />
                             <CheckBox
                                 title='ALLOW DISCOUNT'
-                                checked={!item.NoDiscount}
-                                containerStyle={{backgroundColor: 'rgba(0,0,0,0)',borderWidth: 0}}
-                                textStyle={{fontWeight: 'normal', fontSize: 12, color: 'rgba(0, 0, 0, .38)'}}
+                                checked={item.NoDiscount || false}
+                                containerStyle={{ backgroundColor: 'rgba(0,0,0,0)', borderWidth: 0 }}
+                                textStyle={{ fontWeight: 'normal', fontSize: 12, color: 'rgba(0, 0, 0, .38)' }}
                                 onPress={() => {
                                     this.state.item.NoDiscount = !this.state.item.NoDiscount;
                                     this.forceUpdate();
+                                    this.props.newUpdateData({
+                                        ...this.props.updateData,
+                                        NoDiscount: item.NoDiscount? 0 : -1,
+                                    });
                                 }}
                             />
                         </View>
@@ -180,73 +131,23 @@ class StockModal extends React.Component {
                                     buttonStyle={{backgroundColor: '#2196F3'}}
                                     onPress={() => {
                                         this.props.navigation.navigate('StockScreen', { item: this.state.item, parent: 'Scanner'})
-                                        /*const query = Network.prepareURL({},'stock/id/' + item.StockID,this.state.server);
-                                        console.log('query url',query);
-                                        /Network.executeQuery(query).then(res => {
-                                            const {success, data} = res;
-                                            console.log(success, data);
-                                            if(success) {
-                                                Network.handleResponse(data).then(res => {
-                                                    const {result, data} = res;
-                                                    console.log(result,data);
-                                                    if(result) {
-                                                        console.log(data);
-                                                        let item = new StockObject(data[0]);
-                                                        //let item = data[0];
-                                                        this.props.navigation.navigate('Stock', { item: item, title: `Edit ${item.TradeName}`})
-                                                    }
-                                                })
-                                            }else{
-                                                alert('Failed to find stock');
-                                            }
-                                        });*/
                                     }}
                                     title='FULL EDIT'
                                 />
                                 <Button
-                                    icon={<Icon name="close" type="material-community" color='white' size={20} containerStyle={{paddingLeft: 5}}/>
-                                    }
-                                    //disabled={!this.state.canSave}
+                                    icon={<Icon name="close" type="material-community" color='white' size={20} containerStyle={{paddingLeft: 5}}/>}
                                     titleStyle={{ fontWeight: 'normal', fontSize: 12, color: 'white',padding: 10 }}
-                                    buttonStyle={{backgroundColor: this.state.canSave? 'green' : 'red'}}
+                                    buttonStyle={{backgroundColor: 'green'}}
+                                    disabled={!this.props.canSave}
                                     onPress={() => {
-                                        if(this.state.item.PackSize > 1 && this.state.stock.SOH) {
-                                            this.state.stock.SOH = (this.state.stock.SOH * this.state.item.PackSize);
-                                            this.forceUpdate();
-                                        }
-                                        /*
-                                         UPDATE TABLE
-                                         SET EndDate = CAST('2009-05-25' AS DATETIME)
-                                         WHERE Id = 1
-                                         */
-                                        let object = {
-                                            method: 'PUT',
-                                            headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
-                                            body: JSON.stringify({'stock': this.state.stock})
-                                        };
-                                        console.log(object);
-                                        /*const query = Network.prepareURL({},'stock/id/' + this.state.item.StockID,this.state.server);
-                                        Network.executeQuery(query, object)
-                                            .then(res => {
-                                                const {success, data} = res;
-                                                console.log(success, data);
-                                                if(success) {
-                                                    this.props.navigation.goBack();
-                                                }else{
-                                                    alert('Failed to find stock');
-                                                }
-                                            })
-                                            .catch(err => alert(err));*/
+                                        this.props.updateStockItem(item.StockID,this.props.updateData).then(res => {
+                                            this.props.navigation.goBack();
+                                        })
                                     }}
                                     title='UPDATE'
                                 />
                                 <Button
-                                    icon={<Icon name="close" type="material-community"
-                                                color='white'
-                                                size={20}
-                                                containerStyle={{paddingLeft: 5}}
-                                    />
-                                    }
+                                    icon={<Icon name="close" type="material-community" color='white' size={20} containerStyle={{paddingLeft: 5}} />}
                                     titleStyle={{ fontWeight: 'normal', fontSize: 12, color: 'white',padding: 10 }}
                                     buttonStyle={{backgroundColor: 'grey'}}
                                     onPress={() => {
@@ -264,14 +165,23 @@ class StockModal extends React.Component {
 }
 
 const mapStateToProps = state => ({
-    item: state.stockList.list,
-    loading: state.stockList.loading,
-    error: state.stockList.error,
+    item: state.stockItem.item,
+    itemLoading: state.stockItem.loading,
+    itemError: state.stockItem.error,
+    canSave: state.stockItem.canSave,
+    updateData: state.stockItem.updateData,
+    updateResult: state.stockItem.res,
+    updating: state.stockItem.updating,
+    updatingError: state.stockItem.updatingError
 });
 
-const mapDispatchToProps = {
-
-};
-
+const mapDispatchToProps = (dispatch) => {
+    return ({
+        fetchStockItem: bindActionCreators(fetchStockItem, dispatch),
+        updateStockItem: bindActionCreators(updateStockItem, dispatch),
+        toggleSave: bindActionCreators(toggleSave, dispatch),
+        newUpdateData: bindActionCreators(newUpdateData, dispatch)
+    })
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(StockModal);

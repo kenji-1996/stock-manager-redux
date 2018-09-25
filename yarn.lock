@@ -4434,6 +4434,10 @@ react-native-tab-view@^1.0.0, react-native-tab-view@^1.0.2:
   dependencies:
     prop-types "^15.6.1"
 
+react-native-torch@^1.1.4:
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/react-native-torch/-/react-native-torch-1.1.4.tgz#cf4f96e86403d0759a1f61e216399595ee75e3d7"
+
 react-native-touchable-scale@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/react-native-touchable-scale/-/react-native-touchable-scale-2.0.0.tgz#13a83a9423e46049cad3e3cc306eba2130883cb1"

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, TextInput, Picker } from 'react-native';
 import { Input } from 'react-native-elements';
 
-export const CustomInput = ({ style, value, label, onChange, editable = true, keyboardType = 'default' }) => {
+export const CustomInput = ({ style, value, label, onChange, editable = true, keyboardType = 'default', autoCapitalize = 'none', secureTextEntry = false }) => {
     if(value === null || value === undefined) {
         value = '';
     }
@@ -21,6 +21,8 @@ export const CustomInput = ({ style, value, label, onChange, editable = true, ke
                 inputStyle={inputStyle}
                 onSubmitEditing={() => {  }}
                 autoCorrect={false}
+                autoCapitalize={autoCapitalize}
+                secureTextEntry={secureTextEntry}
             />
     );
 };

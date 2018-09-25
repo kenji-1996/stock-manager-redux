@@ -7,31 +7,33 @@
  */
 //https://medium.com/@relferreira/react-native-redux-react-navigation-ecec4014d648
 import React, {Component} from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, ActivityIndicator } from 'react-native';
 import { createBottomTabNavigator, createStackNavigator } from 'react-navigation';
 import { Icon } from 'react-native-elements'
 
-import reducers from './redux/index';
+import { persistor, store } from './redux/index';
 import { createStore, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/lib/integration/react';
 
 import HomeTab from './components/HomeTab';
 import SearchTab from './components/SearchTab';
 import ScannerTab from './components/ScannerTab';
+import SettingsTab from './components/SettingsTab';
+
+import StockScreen from './components/StockScreen';
+
 import StockModal from './components/modals/StockModal';
-import StockScreen from './components/StockScreen'
+import ScannerSettingsModal from './components/modals/ScannerSettingsModal';
 
 import ConnectedSaveButton from './components/pieces/SaveButton';
 import ConnectedTitle from './components/pieces/ItemTitle';
 
-//https://blog.bam.tech/developper-news/4-ways-to-dispatch-actions-with-redux
-export const store = createStore(reducers, applyMiddleware(thunk));
-
 const Tabs = createBottomTabNavigator(
     {
         Home: {
-            screen: HomeTab
+            screen: HomeTab,
+            title: '',
         },
         Search: {
             screen: SearchTab
@@ -40,7 +42,7 @@ const Tabs = createBottomTabNavigator(
             screen: ScannerTab
         },
         Settings: {
-            screen: SearchTab
+            screen: SettingsTab
         },
     },
     {
@@ -62,13 +64,13 @@ const Tabs = createBottomTabNavigator(
                     iconColor = `${focused ? tintColor : 'gray'}`;
                     iconName = `ios-search`;
                 }
-
                 return <Icon type='ionicon' name={iconName} size={25} color={iconColor} />;
             },
         }),
         tabBarOptions: {
-            activeTintColor: 'tomato',
+            activeTintColor: '#2196f3',
             inactiveTintColor: 'gray',
+            showLabel: false,
         },
     }
 );
@@ -87,6 +89,12 @@ const Stack = createStackNavigator(
                 header: null,
             },
         },
+        ScannerSettingsModal: {
+            screen: ScannerSettingsModal,
+            navigationOptions: {
+                header: null,
+            },
+        },
         StockScreen: {
             screen: StockScreen,
             navigationOptions: {
@@ -95,20 +103,21 @@ const Stack = createStackNavigator(
             },
         },
     },
-    {
-        //mode: 'modal',
-        //headerMode: 'none',
-    }
+    {}
 );
+
+
 
 
 export default class App extends Component {
     render() {
         return (
             <Provider store={store}>
-                <View style={styles.container}>
-                    <Stack/>
-                </View>
+                <PersistGate loading={<ActivityIndicator />} persistor={persistor}>
+                    <View style={styles.container}>
+                        <Stack/>
+                    </View>
+                </PersistGate>
             </Provider>
         );
     }

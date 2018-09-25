@@ -2,19 +2,36 @@
  * Created by kenji on 4/9/18.
  */
 import React from 'react';
-import { View, Text, AsyncStorage, ActivityIndicator, Vibration, StyleSheet } from 'react-native';
-import { createStackNavigator, withNavigationFocus,  } from 'react-navigation';
-import { CheckBox, Button, Icon } from 'react-native-elements'
+import { View, Text, TouchableOpacity, ActivityIndicator, Vibration, StyleSheet } from 'react-native';
+import { createStackNavigator } from 'react-navigation';
+import { Button, Icon } from 'react-native-elements'
 import Camera from 'react-native-camera';
 import GlobalStyle from "../styles/GlobalStyle";
 import { connect } from 'react-redux';
-import { fetchStockItemByBarcode } from '../redux/stock_from_barcode/actions';
+import { fetchStockItemByBarcode } from '../redux/stock/actions';
 import _ from 'lodash';
+import Torch from 'react-native-torch';
 
-class ScannerScreen extends React.Component {
+class Scanner extends React.Component {
 
-    static navigationOptions = {
-        title: 'Scanner',
+    static navigationOptions = ({ navigation }) => {
+        return {
+            headerTitle: 'Scan a barcode',
+            headerRight: (
+                <View>
+                    <TouchableOpacity
+                        onPress={() => { navigation.navigate('ScannerSettingsModal') }}
+                        style={{ marginRight: 9, marginLeft: 22, marginVertical: 8 }}
+                    >
+                        <Icon
+                            name='ios-settings'
+                            type='ionicon'
+                            color='#000000'
+                        />
+                    </TouchableOpacity>
+                </View>
+            ),
+        }
     };
 
     constructor(props) {
@@ -24,128 +41,89 @@ class ScannerScreen extends React.Component {
             barcodeFound: false,
             isFocused: true,
             barcode: '',
+            torchOn: false,
         }
     }
 
-    _loadSettings = () => {
-        AsyncStorage.getItem('tgSettings', (err, result) => {
-            if(!err) {
-                if(result !== null) {
-                    let settings = JSON.parse(result);
-                    this.setState({server: settings.servers[settings.selectedServer].value});
-                }else{
-                    alert('Please ensure your settings are setup and correct in the settings tab')
-                }
-            }else{
-                alert('set server IP in settings');
-            }
-        }).then(() => {
-            //alert('end of promise for getting storage');
+    componentDidMount() {
+        this._willFocusSubscription = this.props.navigation.addListener('willFocus', payload => {
+            this.setState({ barcodeFound: false });
+            setTimeout(() => {
+                Torch.switchState(this.props.screenProps.torch);
+            }, 1000);
         });
-    };
+        this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload => {
+            this.setState({ barcodeFound: false });
+            setTimeout(() => {
+                Torch.switchState(false);
+            }, 1000);
+        });
+
+    }
+
+    componentWillUnmount() {
+        this._willFocusSubscription && this._willFocusSubscription.remove();
+        this._willBlurSubscription && this._willBlurSubscription.remove();
+        Torch.switchState(false);
+    }
 
     _actOnBarcode = (e) => {
-        if (!this.state.barcodeFound) {
+        if (!this.state.barcodeFound && this.props.navigation.isFocused()) {
             Vibration.vibrate(500);
             let barcode = parseInt(e.data);
-            this.setState({barcodeFound: true, barcode: barcode});
-            this.props.fetchStockItemByBarcode(this.state.barcode).then(() => {
-                if (this.props.error === null) {
-                    setTimeout( () => {
-                        this.setState({barcodeFound: false})
-                    },1000);
+            this.setState({ barcodeFound: true, barcode: barcode });
+            this.props.screenProps.fetchStockItemByBarcode(this.state.barcode).then(() => {
+                if (this.props.screenProps.error === null) {
+                    setTimeout(() => {
+                        this.setState({ barcodeFound: false })
+                    }, 1000);
                     this.props.navigation.navigate(`StockModal`, {
-                        item: this.props.item,
+                        item: this.props.screenProps.item,
                         parent: 'Scanner',
                     });
                 }
 
             });
         }
-
     };
-
-    isFocused(isFocused, barcodeFound) {
-        this.setState({isFocused: isFocused, barcodeFound: barcodeFound});
-    }
 
     render() {
         return (
-            <View style={{...GlobalStyle.container}} keyboardShouldPersistTaps="handled">
-                {(this.state.isFocused && !this.state.barcodeFound)?
+            <View style={{ ...GlobalStyle.container }} keyboardShouldPersistTaps="handled">
+                {(!this.state.barcodeFound && this.props.navigation.isFocused()) ?
                     <View>
-                    <View style={[GlobalStyle.headerContainer, { backgroundColor: '#e16969' }]}>
-                        <View style={{flexDirection: 'row', justifyContent:"space-evenly"}}>
-                            <CheckBox
-                                title='SCAN TO LIST'
-                                checked={false}
-                                size={15}
-                                checkedColor="white"
-                                containerStyle={{backgroundColor: 'rgba(0,0,0,0)',borderWidth: 0}}
-                                textStyle={{fontWeight: 'normal', fontSize: 12, color: 'rgba(255, 255, 255, 1)'}}
-                                onPress={() => {
-                                    alert('pressed')
-                                }}
-                            />
-                            <CheckBox
-                                title='QUICK EDIT'
-                                checked={true}
-                                size={15}
-                                checkedColor="white"
-                                containerStyle={{backgroundColor: 'rgba(0,0,0,0)',borderWidth: 0}}
-                                textStyle={{fontWeight: 'normal', fontSize: 12, color: 'rgba(255, 255, 255, 1)'}}
-                                onPress={() => {
-                                    alert('pressed')
-                                }}
-                            />
-                        </View>
-                        <View style={{flexDirection: 'row', justifyContent:"space-evenly"}}>
-                            <CheckBox
-                                title='QR SCANNING'
-                                checked={true}
-                                size={15}
-                                checkedColor="white"
-                                containerStyle={{backgroundColor: 'rgba(0,0,0,0)',borderWidth: 0}}
-                                textStyle={{fontWeight: 'normal', fontSize: 12, color: 'rgba(255, 255, 255, 1)'}}
-                                onPress={() => {
-                                    alert('pressed')
-                                }}
-                            />
-                            <CheckBox
-                                title='NOTIFICATION'
-                                checked={true}
-                                size={15}
-                                checkedColor="white"
-                                containerStyle={{backgroundColor: 'rgba(0,0,0,0)',borderWidth: 0}}
-                                textStyle={{fontWeight: 'normal', fontSize: 12, color: 'rgba(255, 255, 255, 1)'}}
-                                onPress={() => {
-                                    alert('pressed')
-                                }}
-                            />
-                        </View>
-                    </View>
-                        <View style={{height: "80%", justifyContent: 'flex-end'}}>
+                        <View style={{ height: "100%", justifyContent: 'flex-end' }}>
                             <Camera
-                                style={{...GlobalStyle.container}}
+                                style={{ ...GlobalStyle.container }}
                                 onBarCodeRead={this._actOnBarcode.bind(this)}
                                 ref={(cam) => { this.camera = cam; }}
-                                aspect={Camera.constants.Aspect.fill}>
-
+                                aspect={Camera.constants.Aspect.fill}
+                            >
                             </Camera>
                         </View>
                     </View>
                     :
                     <View style={{ ...GlobalStyle.flexColumnContainer, justifyContent: 'center' }}>
-                        <ActivityIndicator size={'large'}/>
-                        <Text>{this.state.barcode}</Text>
-                        <Button
-                            icon={<Icon name="stop" type="material-community" color='white' size={20} containerStyle={{paddingLeft: 5}}/>}
-                            titleStyle={{ fontWeight: 'normal', fontSize: 12, color: 'white',padding: 10 }}
-                            buttonStyle={{backgroundColor: 'red'}}
-                            containerStyle={{margin: 5,}}
-                            onPress={() => {this.setState({ barcodeFound: false})}}
-                            title='Cancel'
-                        />
+                        <ActivityIndicator size={'large'} />
+                        {this.state.barcodeFound?
+                            <View>
+                                <Text>{this.state.barcode}</Text>
+                                <Button
+                                    icon={<Icon name="stop" type="material-community" color='white' size={20} containerStyle={{ paddingLeft: 5 }} />}
+                                    titleStyle={{ fontWeight: 'normal', fontSize: 12, color: 'white', padding: 10 }}
+                                    buttonStyle={{ backgroundColor: 'red' }}
+                                    containerStyle={{ margin: 5, }}
+                                    onPress={() => {
+                                        this.setState({ barcodeFound: false })
+                                    }}
+                                    title='Cancel'
+                                />
+                            </View>
+                            :
+                            <View>
+                            </View>
+                        }
+                        
                     </View>
                 }
             </View>
@@ -153,21 +131,35 @@ class ScannerScreen extends React.Component {
     }
 }
 
-let ScannerStack = createStackNavigator({
-    Scanner: ScannerScreen,
-});
-
 const mapStateToProps = state => ({
-    item: state.stockItemFromBarcode.item,
-    loading: state.stockItemFromBarcode.loading,
-    error: state.stockItemFromBarcode.error,
+    item: state.stockItem.item,
+    loading: state.stockItem.loading,
+    error: state.stockItem.error,
+    torch: state.settings.torch,
 });
 
 const mapDispatchToProps = {
     fetchStockItemByBarcode
 };
 
+const mergeProps = (state, dispatch, ownProps) => {
+    return ({
+        ...ownProps,
+        screenProps: {
+            ...ownProps.screenProps,
+            ...state,
+            ...dispatch,
+        }
+    })
+}
 
-export default connect(mapStateToProps, mapDispatchToProps)(ScannerScreen);
+let ScannerScreen = createStackNavigator({
+    Screen: {
+        screen: Scanner
+    },
+});
+
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(ScannerScreen);
 
 

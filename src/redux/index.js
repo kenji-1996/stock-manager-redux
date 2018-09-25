@@ -3,34 +3,27 @@
  */
 import StockListReducer from './stock_list/reducer';
 import StockItemReducer from './stock/reducer';
-import StockItemFromBarcodeReducer from './stock_from_barcode/reducer'
+import SettingsReducer from './settings/reducer';
 
-import { combineReducers } from 'redux';
+import { combineReducers, createStore, applyMiddleware } from 'redux';
 import { persistStore, persistReducer } from 'redux-persist'
-import storage from 'redux-persist/lib/storage'
-import { createStore, applyMiddleware } from 'redux';
+import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
+import storage from 'redux-persist/lib/storage';
 import thunk from 'redux-thunk';
-import { Provider } from 'react-redux';
 
 const reducerMap = combineReducers({
     stockList: StockListReducer,
     stockItem: StockItemReducer,
-    stockItemFromBarcode: StockItemFromBarcodeReducer,
+    settings: SettingsReducer,
 });
 
 const persistConfig = {
-    key: 'root',
-    storage,
-}
+    key: 'storage',
+    storage: storage,
+    stateReconciler: autoMergeLevel2 // see "Merge Process" section for details.
+};
 
-const persistedReducer = persistReducer(persistConfig, reducerMap);
+const pReducer = persistReducer(persistConfig, reducerMap);
 
-/*export default () => {
-    let store = createStore(persistedReducer)
-    let persistor = persistStore(store)
-    return { store, persistor }
-}*/
-
-//createStore(reducers, applyMiddleware(thunk));
-
-export default reducerMap;
+export const store = createStore(pReducer, applyMiddleware(thunk));
+export const persistor = persistStore(store);

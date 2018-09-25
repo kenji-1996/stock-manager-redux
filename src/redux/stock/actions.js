@@ -6,11 +6,12 @@ import {
     putStockItemBegin, putStockItemSuccess, putStockItemError,
     toggleCanSave, pushUpdateObject
 } from './types';
+import { store } from '../index';
 
 export function fetchStockItem(id) {
     return dispatch => {
         dispatch(fetchStockItemBegin());
-        return fetch(`http://192.168.0.29:49691/stock/id/${id}`)
+        return fetch(`http://${store.getState().settings.connections[store.getState().settings.selectedConnection].value}/stock/id/${id}`)
             .then(handleErrors)
             .then(res => res.json())
             .then(json => {
@@ -24,7 +25,7 @@ export function fetchStockItem(id) {
 export function updateStockItem(id, newStock) {
     return dispatch => {
         dispatch(putStockItemBegin());
-        return fetch(`http://192.168.0.29:49691/stock/id/${id}`, {
+        return fetch(`http://${store.getState().settings.connections[store.getState().settings.selectedConnection].value}/stock/id/${id}`, {
             method: 'PUT',
             headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
             body: JSON.stringify({'stock': newStock})
@@ -36,6 +37,20 @@ export function updateStockItem(id, newStock) {
                 return json;
             })
             .catch(error => dispatch(putStockItemError(error)));
+    };
+}
+
+export function fetchStockItemByBarcode(barcode) {
+    return dispatch => {
+        dispatch(fetchStockItemBegin());
+        return fetch(`http://${store.getState().settings.connections[store.getState().settings.selectedConnection].value}/stock/barcode/${barcode}`)
+            .then(handleErrors)
+            .then(res => res.json())
+            .then(json => {
+                dispatch(fetchStockItemSuccess(json));
+                return json;
+            })
+            .catch(error => dispatch(fetchStockItemError(error)));
     };
 }
 

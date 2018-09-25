@@ -18,7 +18,7 @@ class SearchStock extends Component {
 
     static navigationOptions = {
         headerTitle: <ConnectedSearch />,
-      };
+    };
 
     constructor(props) {
         super(props);
@@ -187,6 +187,6 @@ let SearchStack = createStackNavigator({
     SearchStack: {
       screen: SearchStock
     },
-  });
+});
 
 export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(SearchStack);

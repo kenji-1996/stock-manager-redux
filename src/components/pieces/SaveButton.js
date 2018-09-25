@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { View, TouchableOpacity, Text, } from 'react-native';
+import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { fetchStockItem, updateStockItem } from '../../redux/stock/actions';
 import { bindActionCreators } from 'redux'
@@ -10,13 +11,14 @@ class SaveButton extends Component {
             <View>
                 {this.props.canSave?
                     <TouchableOpacity 
-                        onPress={() => {
-                            this.props.updateStockItem(this.props.item.StockID,this.props.updateData).then(res => {
-                                alert('saved?');
-                            })
-                        }}
-                        style={{marginRight: 9, marginLeft: 22, marginVertical: 12}}>
-                        <Text style={{fontSize: 16, color: '#037aff'}}>Save</Text>
+                        onPress={() => {this.props.updateStockItem(this.props.item.StockID,this.props.updateData).then(res => {alert('Saved!');})}}
+                        style={{marginRight: 9, marginLeft: 22, marginVertical: 8}}
+                    >
+                        <Icon
+                            name='ios-save'
+                            type='ionicon'
+                            color='#000000'
+                        />
                     </TouchableOpacity>
                     :
                     null

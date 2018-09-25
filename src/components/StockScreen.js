@@ -13,7 +13,7 @@ import GlobalStyle from '../styles/GlobalStyle';
 import { fetchStockItem, toggleSave, newUpdateData } from '../redux/stock/actions';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { AppInput, CustomInput } from './pieces/Input'
+import { CustomInput } from './pieces/Input';
 
 class PricingTab extends React.Component {
 
@@ -280,6 +280,10 @@ class StockTab extends React.Component {
                                 onPress={() => {
                                     this.state.item.Update = !this.state.item.Update;
                                     this.forceUpdate();
+                                    this.props.screenProps.newUpdateData({
+                                        ...this.props.screenProps.updateData,
+                                        Update: item.Update? 0 : -1,
+                                    });
                                 }}
                             />
                             <CheckBox
@@ -290,6 +294,10 @@ class StockTab extends React.Component {
                                 onPress={() => {
                                     this.state.item.Labels = !this.state.item.Labels;
                                     this.forceUpdate();
+                                    this.props.screenProps.newUpdateData({
+                                        ...this.props.screenProps.updateData,
+                                        Labels: item.Labels? 0 : -1,
+                                    });
                                 }}
                             />
                         </View>
@@ -302,6 +310,10 @@ class StockTab extends React.Component {
                                 onPress={() => {
                                     this.state.item.AskPrice = !this.state.item.AskPrice;
                                     this.forceUpdate();
+                                    this.props.screenProps.newUpdateData({
+                                        ...this.props.screenProps.updateData,
+                                        AskPrice: item.AskPrice? 0 : -1,
+                                    });
                                 }}
                             />
                             <CheckBox
@@ -312,6 +324,10 @@ class StockTab extends React.Component {
                                 onPress={() => {
                                     this.state.item.Seasonal = !this.state.item.Seasonal;
                                     this.forceUpdate();
+                                    this.props.screenProps.newUpdateData({
+                                        ...this.props.screenProps.updateData,
+                                        Seasonal: item.Seasonal? 0 : -1,
+                                    });
                                 }}
                             />
                         </View>
@@ -324,6 +340,10 @@ class StockTab extends React.Component {
                                 onPress={() => {
                                     this.state.item.OnlyOrdNegSOH = !this.state.item.OnlyOrdNegSOH;
                                     this.forceUpdate();
+                                    this.props.screenProps.newUpdateData({
+                                        ...this.props.screenProps.updateData,
+                                        OnlyOrdNegSOH: item.OnlyOrdNegSOH? 0 : -1,
+                                    });
                                 }}
                             />
                             <CheckBox
@@ -334,6 +354,10 @@ class StockTab extends React.Component {
                                 onPress={() => {
                                     this.state.item.Reorder = !this.state.item.Reorder;
                                     this.forceUpdate();
+                                    this.props.screenProps.newUpdateData({
+                                        ...this.props.screenProps.updateData,
+                                        Reorder: item.Reorder? 0 : -1,
+                                    });
                                 }}
                             />
                         </View>
@@ -346,6 +370,10 @@ class StockTab extends React.Component {
                                 onPress={() => {
                                     this.state.item.Priced = !this.state.item.Priced;
                                     this.forceUpdate();
+                                    this.props.screenProps.newUpdateData({
+                                        ...this.props.screenProps.updateData,
+                                        Priced: item.Priced? 0 : -1,
+                                    });
                                 }}
                             />
                             <CheckBox
@@ -356,6 +384,10 @@ class StockTab extends React.Component {
                                 onPress={() => {
                                     this.state.item.NoDiscount = !this.state.item.NoDiscount;
                                     this.forceUpdate();
+                                    this.props.screenProps.newUpdateData({
+                                        ...this.props.screenProps.updateData,
+                                        NoDiscount: item.NoDiscount? 0 : -1,
+                                    });
                                 }}
                             />
                         </View>
@@ -368,6 +400,10 @@ class StockTab extends React.Component {
                                 onPress={() => {
                                     this.state.item.Shelflabel = !this.state.item.Shelflabel;
                                     this.forceUpdate();
+                                    this.props.screenProps.newUpdateData({
+                                        ...this.props.screenProps.updateData,
+                                        Shelflabel: item.Shelflabel? 0 : -1,
+                                    });
                                 }}
                             />
                             <CheckBox
@@ -375,9 +411,13 @@ class StockTab extends React.Component {
                                 checked={!item.Discontinued || false}
                                 containerStyle={{ backgroundColor: 'rgba(0,0,0,0)', borderWidth: 0 }}
                                 textStyle={{ fontWeight: 'normal', fontSize: 12, color: 'rgba(0, 0, 0, .38)' }}
-                                onPress={() => {
+                                oonPress={() => {
                                     this.state.item.Discontinued = !this.state.item.Discontinued;
                                     this.forceUpdate();
+                                    this.props.screenProps.newUpdateData({
+                                        ...this.props.screenProps.updateData,
+                                        Discontinued: item.Discontinued? 0 : -1,
+                                    });
                                 }}
                             />
                         </View>
@@ -603,7 +643,7 @@ let StockTabs = createMaterialTopTabNavigator(
     },
     {
         navigationOptions: ({ navigation }) => ({
-            tabBarIcon: ({ focused, tintColor }) => {
+            /*tabBarIcon: ({ focused, tintColor }) => {
                 const { routeName } = navigation.state;
                 let iconName, iconColor;
                 if (routeName === 'General') {
@@ -621,13 +661,13 @@ let StockTabs = createMaterialTopTabNavigator(
                 }
 
                 return <Icon type='ionicon' name={iconName} size={25} color={iconColor} />;
-            },
+            },*/
         }),
         tabBarLabel: 'Settings!',
         tabBarOptions: {
             //activeTintColor: 'black',
             //inactiveTintColor: 'gray',
-            showIcon: true,
+            showIcon: false,
             //tabStyle: { backgroundColor: '#FFF', },
             indicatorStyle: {
                 borderBottomColor: '#FFF',
@@ -638,7 +678,6 @@ let StockTabs = createMaterialTopTabNavigator(
         mode: 'card',
         headerMode: 'float',
     }
-
 );
 
 

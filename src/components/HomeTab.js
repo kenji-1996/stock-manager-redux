@@ -6,8 +6,11 @@ import { Button, View, Text } from 'react-native';
 import { CheckBox } from 'react-native-elements';
 import {createStackNavigator,} from 'react-navigation';
 import GlobalStyle from '../styles/GlobalStyle';
+import { fetchStocklist } from '../redux/stock_list/actions';
+import { fetchStockItem } from '../redux/stock/actions';
+import { connect } from 'react-redux';
 
-export default class HomeScreen extends React.Component {
+class HomeScreen extends React.Component {
     static navigationOptions = {
         title: 'Home',
     };
@@ -40,7 +43,36 @@ export default class HomeScreen extends React.Component {
     }
 }
 
-let z = createStackNavigator({
+const mapStateToProps = state => ({
+    list: state.stockList.list,
+    loading: state.stockList.loading,
+    error: state.stockList.error,
+    item: state.stockItem.item,
+    itemLoading: state.stockItem.loading,
+    itemError: state.stockItem.error,
+    searchString: state.stockList.searchString
+});
+
+const mapDispatchToProps = {
+    fetchStocklist, fetchStockItem
+};
+
+const mergeProps = (state, dispatch, ownProps) => {
+    return ({
+        ...ownProps,
+        screenProps: {
+            ...ownProps.screenProps,
+            ...state,
+            ...dispatch,
+        }
+    })
+}
+
+let Home = createStackNavigator({
     Home: HomeScreen,
 });
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(Home);
+
+
 

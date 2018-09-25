@@ -9,13 +9,13 @@ const initialState = {
     error: null,
     pageSize: 50,
     pageNumber: 1,
-    searchString: 'Panadol',
+    searchString: '',
 };
 
 export default function stockListReducer(state = initialState, action) {
     switch(action.type) {
         case FETCH_STOCKLIST_BEGIN:
-            return { ...state, loading: true, error: null };
+            return { ...state, loading: true, error: null, list: [] };
         case FETCH_STOCKLIST_SUCCESS:
             return { ...state, loading: false, list: action.payload.data };
         case FETCH_STOCKLIST_FAIL:

@@ -3,6 +3,7 @@ package com.reduxstarter;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.cubicphuse.RCTTorch.RCTTorchPackage;
 import org.reactnative.camera.RNCameraPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.facebook.react.ReactNativeHost;
@@ -25,6 +26,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RCTTorchPackage(),
             new RNCameraPackage(),
             new VectorIconsPackage()
       );
