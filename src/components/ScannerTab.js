@@ -9,6 +9,7 @@ import Camera from 'react-native-camera';
 import GlobalStyle from "../styles/GlobalStyle";
 import { connect } from 'react-redux';
 import { fetchStockItemByBarcode } from '../redux/stock/actions';
+import { updateLastItem } from '../redux/settings/actions';
 import _ from 'lodash';
 import Torch from 'react-native-torch';
 
@@ -25,6 +26,20 @@ class Scanner extends React.Component {
                     >
                         <Icon
                             name='ios-settings'
+                            type='ionicon'
+                            color='#000000'
+                        />
+                    </TouchableOpacity>
+                </View>
+            ),
+            headerLeft: (
+                <View>
+                    <TouchableOpacity
+                        onPress={() => { alert('insert custom input for non-scannable barcodes')}}
+                        style={{ marginRight: 9, marginLeft: 9, marginVertical: 8 }}
+                    >
+                        <Icon
+                            name='ios-create'
                             type='ionicon'
                             color='#000000'
                         />
@@ -77,6 +92,7 @@ class Scanner extends React.Component {
                     setTimeout(() => {
                         this.setState({ barcodeFound: false })
                     }, 1000);
+                    this.props.screenProps.updateLastItem(this.props.screenProps.item);
                     this.props.navigation.navigate(`StockModal`, {
                         item: this.props.screenProps.item,
                         parent: 'Scanner',
@@ -139,7 +155,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    fetchStockItemByBarcode
+    fetchStockItemByBarcode, updateLastItem
 };
 
 const mergeProps = (state, dispatch, ownProps) => {

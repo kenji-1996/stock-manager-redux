@@ -3,7 +3,8 @@
  */
 import {
     addConnection, delConnection, setConnection, 
-    setLicense, setStaffID, setTorch
+    setLicense, setStaffID, setTorch,
+    setLastItem, pushLatestItem
 } from './types';
 import { store } from '../index';
 
@@ -23,7 +24,6 @@ export function removeConnection(connection) {
             newConnections.remByVal(connection);
             dispatch(delConnection(newConnections));
         }
-        //
     }
 }
 
@@ -42,6 +42,17 @@ export function updateLicense(license) {
 export function updateStaffID(id) {
     return dispatch => {
         dispatch(setStaffID(id));
+    }
+}
+
+export function updateLastItem(item) {
+    return dispatch => {
+        dispatch(setLastItem(item));
+        var recentList = store.getState().settings.LastTenItems;
+        recentList.unshift(item);
+        recentList.slice(0,5);
+        console.log(recentList);
+        dispatch(pushLatestItem(recentList));
     }
 }
 

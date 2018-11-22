@@ -21,53 +21,11 @@ class SettingsScreen extends React.Component {
             newServer: '',
             newLicense: '',
             tgSettings: {},
-            loading: true,
         };
     }
 
     componentWillMount() {
-        console.log(this.props);
-        this.setState({loading: false});
     }
-
-    _populateSettings = () => {
-        console.log('attempting to get async storage');
-        AsyncStorage.getItem('tgSettings', (err, res) =>
-        {
-            if(!err) {
-                if(res !== null) {
-                    console.log('raw settings', res);
-                    let settingsInfo = JSON.parse(res);
-                    console.log('settings ', settingsInfo);
-                    this.state.tgSettings = {
-                        selectedServer: settingsInfo.selectedServer || 0,
-                        servers: settingsInfo.servers || [{value:'192.168.0.29:49691'}],
-                        serverError: settingsInfo.serverError ||  '',
-                        selectedLicense: settingsInfo.selectedLicense || 0,
-                        licenses: settingsInfo.licenses || [{value:'techgorilla-123'}],
-                        licenseError: settingsInfo.licenseError ||  '',
-                    };
-                    this.state.loading = false;
-                    this.forceUpdate();
-                }else{
-                    this.state.tgSettings = {
-                        selectedServer: 0,
-                        servers: [{value:'192.168.0.29:49691'}],
-                        serverError: '',
-                        selectedLicense: 0,
-                        licenses: [{value:'techgorilla-123'}],
-                        licenseError: '',
-                    };
-                    this.state.loading = false;
-                    this.forceUpdate();
-                    AsyncStorage.setItem('tgSettings', JSON.stringify(this.state.tgSettings), () => {});
-                    console.log('result is null');
-                }
-            }else{
-                console.log('failed');
-            }
-        });
-    };
 
     _checkLicense = (license) => {
         if(license) {
@@ -81,13 +39,9 @@ class SettingsScreen extends React.Component {
     };
 
     render() {
-
         return (
             <View style={GlobalStyle.container} keyboardShouldPersistTaps="handled">
-                { this.state.loading ?
-                    <View style={GlobalStyle.centerContainer}><ActivityIndicator size="small" /></View>
-                    :
-                    <View style={GlobalStyle.mainContainer}>
+                <View style={GlobalStyle.mainContainer}>
                         <View style={GlobalStyle.mainContainerHorizontal}>
                             <Dropdown
                                 label='CURRENT CONNECTION'
@@ -141,7 +95,6 @@ class SettingsScreen extends React.Component {
                             }}
                         />
                     </View>
-                }
             </View>
         );
     }

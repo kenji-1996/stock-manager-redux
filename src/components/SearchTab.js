@@ -4,12 +4,13 @@
 import React, { Component } from 'react';
 import { View, Text, FlatList, StyleSheet, RefreshControl } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
-import { Icon, Input, ListItem } from 'react-native-elements';
+import { ListItem } from 'react-native-elements';
 import GlobalStyle from '../styles/GlobalStyle';
 import Format from '../functions/Format';
 import { connect } from 'react-redux';
 import { fetchStocklist } from '../redux/stock_list/actions';
 import { fetchStockItem } from '../redux/stock/actions';
+import { updateLastItem } from '../redux/settings/actions';
 import ConnectedSearch from './pieces/SearchInput';
 import Stock from '../objects/StockItem';
 
@@ -18,6 +19,7 @@ class SearchStock extends Component {
 
     static navigationOptions = {
         headerTitle: <ConnectedSearch />,
+        headerStyle: { height: 70 },
     };
 
     constructor(props) {
@@ -51,6 +53,7 @@ class SearchStock extends Component {
             }
             onPress={() => {
                 this.props.screenProps.fetchStockItem(item.StockID).then(() => {
+                    this.props.screenProps.updateLastItem(item);
                     if (!this.props.screenProps.itemLoading) {
                         if (this.props.screenProps.itemError === null) {
                             this.props.navigation.navigate(`StockScreen`, { item: this.props.screenProps.item, parent: 'Search' })
@@ -61,6 +64,7 @@ class SearchStock extends Component {
             }}
             onLongPress={() => {
                 this.props.screenProps.fetchStockItem(item.StockID).then(() => {
+                    this.props.screenProps.updateLastItem(item);
                     if (!this.props.screenProps.itemLoading) {
                         if (this.props.screenProps.itemError === null) {
                             this.props.navigation.navigate(`StockModal`, { item: this.props.screenProps.item, parent: 'Search' })
@@ -73,41 +77,11 @@ class SearchStock extends Component {
         );
     };
 
-    _renderItem = ({ item }) => (
-        <ListItem style={styles.listItem} title={item.TradeName}
-            subtitle={
-                <View>
-                    <Text>Retail: {Format.formatPrice(item.Retail)}, Real: {Format.formatPrice(item.RealCost)}</Text>
-                </View>
-            }
-            onPress={() => {
-                this.props.screenProps.fetchStockItem(item.StockID).then(() => {
-                    if (!this.props.screenProps.itemLoading) {
-                        if (this.props.screenProps.itemError === null) {
-                            this.props.navigation.navigate(`StockScreen`, { item: this.props.screenProps.item, parent: 'Search' })
-                        }
-                    }
-                });
-
-            }}
-            onLongPress={() => {
-                this.props.screenProps.fetchStockItem(item.StockID).then(() => {
-                    if (!this.props.screenProps.itemLoading) {
-                        if (this.props.screenProps.itemError === null) {
-                            this.props.navigation.navigate(`StockModal`, { item: this.props.screenProps.item, parent: 'Search' })
-                        }
-                    }
-                });
-            }}
-            badge={{ value: (item.SOH), textStyle: {}, containerStyle: { marginTop: -20 } }}
-        />
-    );
-
     render() {
         const { list, loading, error } = this.props.screenProps;
         return (
             <View style={GlobalStyle.container} keyboardShouldPersistTaps="handled">
-                <View style={{marginTop: 8}}>
+                <View style={{marginTop: 0}}>
                     <FlatList
                         styles={{...styles.container, marginBottom: 90}}
                         data={list}
@@ -169,7 +143,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    fetchStocklist, fetchStockItem
+    fetchStocklist, fetchStockItem, updateLastItem
 };
 
 const mergeProps = (state, dispatch, ownProps) => {
