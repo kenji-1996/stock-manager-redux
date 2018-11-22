@@ -23,19 +23,27 @@ class HomeScreen extends React.Component {
         console.log(this.props)
     }
 
-    renderItem = ({ item }) => {
-        item = new Stock(item);
-        return (
-            <ListItem style={styles.listItem} title={item.TradeName}
-            subtitle={
+    /*
+
+                subtitle={
                 <View>
                     <Text>Retail: {Format.formatPrice(item.Retail)}, Real: {Format.formatPrice(item.RealCost)}</Text>
                     <Text>SOH: {item.SOH}</Text>
                 </View>
             }
+            badge={{ value: (item.SOH.toString()), textStyle: {}, containerStyle: { marginTop: -20 } }}
+            */
+
+    renderItem = ({ item }) => {
+        return (
+            <View style={{paddingVertical: 2}}>
+            <ListItem 
+            style={{}}
+            containerStyle={{...styles.listItem}}
+            title={item.TradeName}
+
             onPress={() => {
                 this.props.screenProps.fetchStockItem(item.StockID).then(() => {
-                    this.props.screenProps.updateLastItem(item);
                     if (!this.props.screenProps.itemLoading) {
                         if (this.props.screenProps.itemError === null) {
                             this.props.navigation.navigate(`StockScreen`, { item: this.props.screenProps.item, parent: 'Search' })
@@ -46,7 +54,6 @@ class HomeScreen extends React.Component {
             }}
             onLongPress={() => {
                 this.props.screenProps.fetchStockItem(item.StockID).then(() => {
-                    this.props.screenProps.updateLastItem(item);
                     if (!this.props.screenProps.itemLoading) {
                         if (this.props.screenProps.itemError === null) {
                             this.props.navigation.navigate(`StockModal`, { item: this.props.screenProps.item, parent: 'Search' })
@@ -54,8 +61,9 @@ class HomeScreen extends React.Component {
                     }
                 });
             }}
-            badge={{ value: (item.SOH.toString()), textStyle: {}, containerStyle: { marginTop: -20 } }}
+            
         />
+        </View>
         );
     };
 
@@ -117,12 +125,14 @@ class HomeScreen extends React.Component {
                     <Text style={GlobalStyle.stockHeaderFont}>Recently viewed</Text>
                     <Divider style={{ backgroundColor: 'gray', width: '100%' }} />
                 </View>
-                <FlatList
-                        styles={{...styles.container, marginBottom: 90}}
-                        data={latestItems}
-                        renderItem={this.renderItem}
-                        keyExtractor={(item, StockID) => StockID.toString()}
-                    />
+                <View style={{paddingHorizontal: 10, paddingTop: 5}} >
+                    <FlatList
+                            styles={{...styles.container}}
+                            data={latestItems}
+                            renderItem={this.renderItem}
+                            keyExtractor={(item, StockID) => StockID.toString()}
+                        />
+                </View>
             </ScrollView>
             
         );
@@ -139,9 +149,9 @@ const styles = StyleSheet.create({
         borderBottomColor: '#ccc'
     },
     listItem: {
-        marginBottom: 1,
-        borderBottomWidth: 1,
-        borderBottomColor: 'rgba(0, 0, 0, 0.12)',
+        borderRadius:2,
+        borderWidth: 1,
+        borderColor: 'rgba(0, 0, 0, 0.12)',
     },
     sectionContainer: {
         borderBottomWidth: 1,

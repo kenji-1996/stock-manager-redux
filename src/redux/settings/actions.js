@@ -50,9 +50,8 @@ export function updateLastItem(item) {
         dispatch(setLastItem(item));
         var recentList = store.getState().settings.LastTenItems;
         recentList.unshift(item);
-        recentList.slice(0,5);
-        console.log(recentList);
-        dispatch(pushLatestItem(recentList));
+        var test = recentList.splice(0,5);
+        dispatch(pushLatestItem(test));
     }
 }
 
